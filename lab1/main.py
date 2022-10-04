@@ -3,6 +3,7 @@ import time
 from ELB_setup import *
 import boto3
 from ELB_teardown import *
+from security_group import *
 
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
@@ -11,22 +12,29 @@ TODO: Remove the main function the goal of this method is to test the creation o
 
 
 def main():
-    client = boto3.client('elbv2')
-    vpc_id = ' '
-    cluster1 = create_target_groups(client, "cluster1", vpc_id)["TargetGroups"][0]
-    cluster2 = create_target_groups(client, "cluster2", vpc_id)["TargetGroups"][0]
+    elb_client = boto3.client('elbv2')
+    ec2_client = boto3.client('ec2')
+    default_security_group= ec2_client.describe_security_groups(GroupNames=['default'])['SecurityGroups'][0]
+    vpcs = ec2_client.describe_vpcs()
+    vpc_id = vpcs.get('Vpcs', [{}])[0].get('VpcId', '')
+    sg = create_security_group(ec2_client, vpc_id)
+    cluster1 = create_target_groups(elb_client, "cluster1", vpc_id)["TargetGroups"][0]
+    cluster2 = create_target_groups(elb_client, "cluster2", vpc_id)["TargetGroups"][0]
     target_groups = [cluster1['TargetGroupArn'], cluster2['TargetGroupArn']]
-    # Hardcoded security group id
     subnets = ['subnet-0368628d6c8694be6', 'subnet-0584deae6391f04bf']
-    security_groups = ['sg-03d6e26eae0579bd9']
-    load_balancer = create_load_balancer(subnets, security_groups, target_groups)
+    security_groups = [sg['GroupId']]
+    load_balancer = create_load_balancer(elb_client, subnets, security_groups, target_groups)
+    print("Set up completed")
     # wait 30 seconds to simulate an interruption
-    time.sleep(30)
+    time.sleep(5)
     # Tear down
+    delete_load_balancer(elb_client, load_balancer, default_security_group['GroupId'])
     for target_group in target_groups:
-        delete_target_group(target_group)
+        delete_target_group(elb_client, target_group)
 
-    delete_load_balancer(load_balancer['LoadBalancerArn'])
+    time.sleep(5)
+    delete_security_group(ec2_client, sg['GroupId'])
+    print("Successfully deleted")
 
 
 main()

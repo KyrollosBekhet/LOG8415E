@@ -10,38 +10,10 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
     :return: The load balancer information after the creation
     Response syntax:
         {
-            'LoadBalancerArn': 'string',
-            'DNSName': 'string',
-            'CanonicalHostedZoneId': 'string',
-            'CreatedTime': datetime(2015, 1, 1),
-            'LoadBalancerName': 'string',
-            'Scheme': 'internet-facing'|'internal',
-            'VpcId': 'string',
-            'State': {
-                'Code': 'active'|'provisioning'|'active_impaired'|'failed',
-                'Reason': 'string'
-            },
-            'Type': 'application'|'network'|'gateway',
-            'AvailabilityZones': [
-                {
-                    'ZoneName': 'string',
-                    'SubnetId': 'string',
-                    'OutpostId': 'string',
-                    'LoadBalancerAddresses': [
-                        {
-                            'IpAddress': 'string',
-                            'AllocationId': 'string',
-                            'PrivateIPv4Address': 'string',
-                            'IPv6Address': 'string'
-                        },
-                    ]
-                },
-            ],
-            'SecurityGroups': [
-                'string',
-            ],
-            'IpAddressType': 'ipv4'|'dualstack',
-            'CustomerOwnedIpv4Pool': 'string'
+            LoadBalancerArn: 'string',
+              LoadBalancerDNS: 'string',
+              ListenerArn: 'string',
+              RuleArns: [first_rule_response: String[]
         },
     """
 
@@ -80,7 +52,7 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
                                                      ],
                                                  },
                                              ],
-                                             Priority=20)
+                                             Priority=20)["Rules"][0]
 
     second_rule_response = client.create_rule(ListenerArn=listener["ListenerArn"],
                                               Actions=[
@@ -97,8 +69,14 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
                                                       ],
                                                   },
                                               ],
-                                              Priority=15)
-    print(load_balancer)
+                                              Priority=15)['Rules'][0]
+    ret = {
+              'LoadBalancerArn': load_balancer['LoadBalancerArn'],
+              'LoadBalancerDNS': load_balancer['DNSName'],
+              'ListenerArn': listener["ListenerArn"],
+              'RuleArns': [first_rule_response['RuleArn'], second_rule_response['RuleArn']]
+    }
+    return ret
 
 
 def create_target_groups(client, name, vpc_id):

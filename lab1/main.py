@@ -1,5 +1,8 @@
-from ELB_setup import *
+import time
 
+from ELB_setup import *
+import boto3
+from ELB_teardown import *
 
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
@@ -8,13 +11,22 @@ TODO: Remove the main function the goal of this method is to test the creation o
 
 
 def main():
-    cluster1 = create_target_groups("cluster1")["TargetGroups"][0]
-    cluster2 = create_target_groups("cluster2")["TargetGroups"][0]
+    client = boto3.client('elbv2')
+    vpc_id = ' '
+    cluster1 = create_target_groups(client, "cluster1", vpc_id)["TargetGroups"][0]
+    cluster2 = create_target_groups(client, "cluster2", vpc_id)["TargetGroups"][0]
     target_groups = [cluster1['TargetGroupArn'], cluster2['TargetGroupArn']]
     # Hardcoded security group id
     subnets = ['subnet-0368628d6c8694be6', 'subnet-0584deae6391f04bf']
     security_groups = ['sg-03d6e26eae0579bd9']
-    create_load_balancer(subnets, security_groups, target_groups)
+    load_balancer = create_load_balancer(subnets, security_groups, target_groups)
+    # wait 30 seconds to simulate an interruption
+    time.sleep(30)
+    # Tear down
+    for target_group in target_groups:
+        delete_target_group(target_group)
+
+    delete_load_balancer(load_balancer['LoadBalancerArn'])
 
 
 main()

@@ -1,11 +1,9 @@
-import boto3
-
-client = boto3.client("elbv2")
 
 
-def create_load_balancer(subnets, security_groups, target_groups):
+def create_load_balancer(client, subnets, security_groups, target_groups):
     """
 
+    :param client: The client connection using boto3
     :param subnets: The subnets for request mapping
     :param security_groups: The security groups ids that allow the traffic
     :param target_groups: The ARN of the target groups
@@ -103,9 +101,11 @@ def create_load_balancer(subnets, security_groups, target_groups):
     print(load_balancer)
 
 
-def create_target_groups(name):
+def create_target_groups(client, name, vpc_id):
     """
 
+    :param vpc_id: a string representing the virtual private cloud id
+    :param client: The client connection using boto3
     :param name: the name of the cluster or target group
     :return: the newly created target group
     Response syntax:
@@ -139,4 +139,4 @@ def create_target_groups(name):
     ]
     }
     """
-    return client.create_target_group(Name=name, Protocol="HTTP", Port=80, VpcId='vpc-0d0c6c1e07541998e')
+    return client.create_target_group(Name=name, Protocol="HTTP", Port=80, VpcId=vpc_id)

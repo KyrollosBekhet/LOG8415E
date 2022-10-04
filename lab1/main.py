@@ -22,6 +22,9 @@ def main():
     cluster2 = create_target_groups(elb_client, "cluster2", vpc_id)["TargetGroups"][0]
     target_groups = [cluster1['TargetGroupArn'], cluster2['TargetGroupArn']]
     subnets = ['subnet-0368628d6c8694be6', 'subnet-0584deae6391f04bf']
+    
+    key_name = "private_automatic_key"
+    instances_ami = 'ami-08c40ec9ead489470'
     security_groups = [sg['GroupId']]
     load_balancer = create_load_balancer(elb_client, subnets, security_groups, target_groups)
     print("Set up completed")

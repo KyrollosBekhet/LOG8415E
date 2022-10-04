@@ -27,8 +27,8 @@ def main():
     sn_all = ec2_client.describe_subnets()
     subnets = []
     for sn in sn_all['Subnets']:
-        if sn['AvailabilityZone'] == 'us-east-1a' or sn['AvailabilityZone'] == 'us-east-1b':
-            print(sn)
+        if sn['AvailabilityZone'] == 'us-east-1a' or\
+                sn['AvailabilityZone'] == 'us-east-1b':
             subnets.append(sn['SubnetId'])
 
     key_name = "private_automatic_key"
@@ -40,26 +40,41 @@ def main():
                          private_key["KeyName"], "cluster1", subnets[1], vpc_id, 1
                          , sg['GroupId'])
         print("Instance created")
-
-        instances = ec2_resource.instances
-        for instance in instances:
-            print(instance.id, instance.tags)
     except Exception as e:
         print(e)
 
+    awake = False
+    # for now number of instances are 1
+    awake_instances = None
+    while awake is False:
+        awake_instances = ec2_resource.instances.filter(
+            Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]
+        )
+        if len(list(awake_instances.all())) == 1:
+            awake = True
+
+    cluster1_instances = awake_instances.filter(
+        Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]
+    )
+    cluster1_targets_ids = []
+    for ins in cluster1_instances.all():
+        cluster1_targets_ids.append({'Id': ins.id})
+
+    add_instance_to_target_group(elb_client, target_groups[0], cluster1_targets_ids)
     security_groups = [sg['GroupId']]
-    load_balancer = create_load_balancer(elb_client, subnets,
-                                         security_groups, target_groups)
+
+    #load_balancer = create_load_balancer(elb_client, subnets,
+     #                                    security_groups, target_groups)
     print("Set up completed")
     # wait 30 seconds to simulate an interruption
     time.sleep(5)
     # Tear down
-    delete_load_balancer(elb_client, load_balancer)
-    for target_group in target_groups:
-        delete_target_group(elb_client, target_group)
+    #delete_load_balancer(elb_client, load_balancer)
+    #for target_group in target_groups:
+     #   delete_target_group(elb_client, target_group)
 
     time.sleep(5)
-    #delete_security_group(ec2_client, sg['GroupId'])
+    # delete_security_group(ec2_client, sg['GroupId'])
     print("Successfully deleted")
 
 

@@ -1,3 +1,5 @@
+import time
+
 import boto3
 
 
@@ -31,12 +33,12 @@ def create_security_group(ec2, vpc_id):
         GroupName="TP1automaticSG",
         VpcId=vpc_id
     )
-    add_outbound_rules(ec2 , sG['GroupId'])
+    add_outbound_rules(ec2, sG['GroupId'])
     add_inbound_rules(ec2, sG['GroupId'])
     return sG
 
 
-def add_inbound_rules(ec2 , security_group_id):
+def add_inbound_rules(ec2, security_group_id):
     # ingress_rules
     """
     The rules accepted from incoming traffic will correspond to SSH, HTTP and HTTPS
@@ -60,7 +62,7 @@ def add_inbound_rules(ec2 , security_group_id):
         IpPermissions=ip_permission)
 
 
-def add_outbound_rules(ec2 , security_group_id):
+def add_outbound_rules(ec2, security_group_id):
     # egress_rules
     """
     The rules accepted to go to the outside traffic will be HTTP and HTTPS
@@ -81,9 +83,16 @@ def add_outbound_rules(ec2 , security_group_id):
         IpPermissions=ip_permission)
 
 
+def delete_security_group(ec2, security_group_id):
+    ec2.delete_security_group(GroupId=security_group_id)
+
+
 if __name__ == "__main__":
     ec2_client = boto3.client('ec2')
     response = ec2_client.describe_vpcs()
     vpc_id = response.get('Vpcs', [{}])[0].get('VpcId', '')
     sG = create_security_group(ec2_client, vpc_id)
     print(sG['GroupId'])
+    # The sleep is placed to simulate an interruption
+    time.sleep(60)
+    delete_security_group(ec2_client, sG['GroupId'])

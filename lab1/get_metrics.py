@@ -19,12 +19,12 @@ response = client.get_metric_data(
                 'Stat': 'Avg',
                 'Unit': 'Percent'
             },
-            'Period': 15,
+            'Period': 15, # Requests interval
         }
     ],
     StartTime=datetime.utcnow()-timedelta(seconds=600), # Requests metrics from 10 minutes ago
     EndTime=datetime.utcnow(),
     LabelOptions={
-        'Timezone': -0400
+        'Timezone': -0400 # Timezone offset from UTC for Eastern Time
     }
 )

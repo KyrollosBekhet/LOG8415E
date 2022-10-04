@@ -14,11 +14,22 @@ def create_key_pair(ec2_resource,
 
 def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
                      subnet_id, vpc_id, count,
-                     security_group_name="TP1automaticSG"):
+                     security_group_id):
+    tag_spec = [
+        {
+            'ResourceType': 'instance',
+            'Tags': [
+                {
+                    'Key': 'Name',
+                    'Value': tags
+                },
+            ]
+        },
+    ]
     instance_params = {
         'ImageId': image_id, 'InstanceType': instance_type,
-        'KeyName': key_name, 'SecurityGroups': security_group_name,
-        'SubnetId': subnet_id, 'VpcId': vpc_id, 'tags': tags
+        'KeyName': key_name, 'SecurityGroupIds': [security_group_id],
+        'SubnetId': subnet_id, 'TagSpecifications': tag_spec
     }
     instances = ec2_resource.create_instances(**instance_params, MinCount=count, MaxCount=count)
     print(instances)

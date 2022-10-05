@@ -33,3 +33,13 @@ def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
     }
     instances = ec2_resource.create_instances(**instance_params, MinCount=count, MaxCount=count)
     print(instances)
+
+
+def terminate_instances(ec2_resource, instances_ids):
+    ids = []
+    for ins in instances_ids:
+        instance = ec2_resource.Instance(ins['Id'])
+        instance.terminate()
+        instance.wait_until_terminated()
+
+    #print(ec2_client.terminate_instances(InstanceIds=ids))

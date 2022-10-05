@@ -20,3 +20,10 @@ def delete_load_balancer(client, load_balancer):
 
     client.delete_listener(ListenerArn=load_balancer['ListenerArn'])
     client.delete_load_balancer(LoadBalancerArn=load_balancer['LoadBalancerArn'])
+
+
+def remove_instance_from_target_group(elb_client, cluster_arn, instances_id):
+    elb_client.deregister_targets(
+        TargetGroupArn=cluster_arn,
+        Targets=instances_id
+    )

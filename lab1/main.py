@@ -63,18 +63,41 @@ def main():
     add_instance_to_target_group(elb_client, target_groups[0], cluster1_targets_ids)
     security_groups = [sg['GroupId']]
 
-    #load_balancer = create_load_balancer(elb_client, subnets,
-     #                                    security_groups, target_groups)
+    load_balancer = create_load_balancer(elb_client, subnets,
+                                         security_groups, target_groups)
     print("Set up completed")
     # wait 30 seconds to simulate an interruption
     time.sleep(5)
     # Tear down
-    #delete_load_balancer(elb_client, load_balancer)
-    #for target_group in target_groups:
-     #   delete_target_group(elb_client, target_group)
+    delete_load_balancer(elb_client, load_balancer)
 
-    time.sleep(5)
-    # delete_security_group(ec2_client, sg['GroupId'])
+    remove_instance_from_target_group(elb_client, target_groups[0],
+                                      cluster1_targets_ids)
+    for target_group in target_groups:
+        delete_target_group(elb_client, target_group)
+
+    terminate_instances(ec2_resource, cluster1_targets_ids)
+    #time.sleep(5)
+    """
+    MAX_INSTANCES = 1
+    while awake is True:
+        awake_vms_number = MAX_INSTANCES
+        terminated_instances = ec2_resource.instances.filter(
+            Filters=[{'Name': 'instance-state-name', 'Values': ['terminated']}]
+        )
+        for created_instance in awake_instances:
+            print("created instance id : " + created_instance.id)
+            for terminated_ins in terminated_instances:
+                print("terminated instance id: " + terminated_ins)
+                if terminated_ins.id.__eq__(created_instance.id):
+                    awake_vms_number -= 1
+                    print('awake_vm decreased')
+
+        if awake_vms_number == 0:
+            awake = False
+    """
+
+    delete_security_group(ec2_client, sg['GroupId'])
     print("Successfully deleted")
 
 

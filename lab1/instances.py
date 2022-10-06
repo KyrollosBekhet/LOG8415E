@@ -1,6 +1,3 @@
-import boto3
-
-
 def create_key_pair(ec2_resource,
                     key_name):
     """

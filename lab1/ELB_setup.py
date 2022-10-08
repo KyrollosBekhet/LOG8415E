@@ -9,9 +9,9 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
     Response syntax:
         {
             LoadBalancerArn: 'string',
-              LoadBalancerDNS: 'string',
-              ListenerArn: 'string',
-              RuleArns: [first_rule_response: String[]
+            LoadBalancerDNS: 'string',
+            ListenerArn: 'string',
+            RuleArns: [first_rule_response: String[]
         },
     """
 

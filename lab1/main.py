@@ -8,6 +8,8 @@ from security_group import *
 from instances import *
 from ssh_connection import *
 
+from nginx_file_writter import *
+
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
  and target groups. Also to identify what is needed to create the load balancer
@@ -24,7 +26,7 @@ def main():
 
     default_security_group = ec2_client.describe_security_groups(
         GroupNames=['default'])['SecurityGroups'][0]
-        
+
     vpcs = ec2_client.describe_vpcs()
     vpc_id = vpcs.get('Vpcs', [{}])[0].get('VpcId', '')
     sg = create_security_group(ec2_client, vpc_id)
@@ -45,6 +47,8 @@ def main():
 
     load_balancer = create_load_balancer(elb_client, subnets,
                                          security_groups, target_groups)
+
+    write_file_content(load_balancer['LoadBalancerDNS'])
 
     instances_ami = 'ami-08c40ec9ead489470'
 
@@ -81,7 +85,7 @@ def main():
 
     for ip in public_ips:
         print('Starting deployement for instance with IP: {}'.format(ip))
-        start_deployement(ip,'flask_application', commands)
+        start_deployement(ip, 'flask_application', commands)
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]

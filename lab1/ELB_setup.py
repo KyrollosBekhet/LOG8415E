@@ -1,5 +1,3 @@
-
-
 def create_load_balancer(client, subnets, security_groups, target_groups):
     """
 
@@ -71,10 +69,10 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
                                               ],
                                               Priority=15)['Rules'][0]
     ret = {
-              'LoadBalancerArn': load_balancer['LoadBalancerArn'],
-              'LoadBalancerDNS': load_balancer['DNSName'],
-              'ListenerArn': listener["ListenerArn"],
-              'RuleArns': [first_rule_response['RuleArn'], second_rule_response['RuleArn']]
+        'LoadBalancerArn': load_balancer['LoadBalancerArn'],
+        'LoadBalancerDNS': load_balancer['DNSName'],
+        'ListenerArn': listener["ListenerArn"],
+        'RuleArns': [first_rule_response['RuleArn'], second_rule_response['RuleArn']]
     }
     return ret
 
@@ -118,3 +116,10 @@ def create_target_groups(client, name, vpc_id):
     }
     """
     return client.create_target_group(Name=name, Protocol="HTTP", Port=80, VpcId=vpc_id)
+
+
+def add_instance_to_target_group(elb_client, cluster_arn, instances_id):
+    elb_client.register_targets(
+        TargetGroupArn=cluster_arn,
+        Targets=instances_id
+    )

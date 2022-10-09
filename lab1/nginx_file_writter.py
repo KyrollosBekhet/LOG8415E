@@ -20,7 +20,7 @@ def write_file_content(dns):
           + "\t }\n" \
           + "\t".join("}")
     print(ret)
-    path_folder = os.path.abspath('flask_application')
+    path_folder = os.path.curdir
     path_file = os.path.join(path_folder, 'nginxconfig')
     f = open(path_file, "w")
     f.write(ret)

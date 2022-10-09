@@ -21,7 +21,8 @@ def instance_connection(instance_ip):
     This function initialize a connection with the ec2 instance.
     """
     ssh_username = "ubuntu"
-    ssh_key_file = os.path.abspath("labsuser.pem")
+    path = os.path.curdir
+    ssh_key_file = os.path.join(path, "labsuser.pem")
 
     rsa_key = paramiko.RSAKey.from_private_key_file(ssh_key_file)
 

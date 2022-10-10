@@ -7,6 +7,8 @@ from ELB_teardown import *
 from security_group import *
 from instances import *
 from ssh_connection import *
+from threading import Thread
+from endpoint_call import *
 
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
@@ -98,6 +100,18 @@ def main():
     # wait 30 seconds to simulate an interruption
 
     time.sleep(5)
+
+    # calling endpoints. TODO: Modify this code if needed
+    threads = []
+    threads.append(Thread(target=call_endpoint_http_thread1, args=(load_balancer["LoadBalancerDNS"])))
+    threads.append(Thread(target=call_endpoint_http_thread2, args=(load_balancer["LoadBalancerDNS"])))
+    
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
 
     # Tear down
     delete_load_balancer(elb_client, load_balancer)

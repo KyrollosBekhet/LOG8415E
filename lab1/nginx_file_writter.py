@@ -9,9 +9,10 @@ server {
     }
   }
 """
+import os
 
 
-def get_file_content(dns):
+def write_file_content(dns):
     ret = "server " + "{\n" + "\t listen 80;\n" +\
           "\t server_name {};\n".format(dns) + "\n" +\
           "\t location" + "/ {\n" +\
@@ -19,10 +20,12 @@ def get_file_content(dns):
           + "\t }\n" \
           + "\t".join("}")
     print(ret)
-    f = open("./flask_application/nginxconfig","w")
+    path_folder = os.path.abspath('flask_application')
+    path_file = os.path.join(path_folder, 'nginxconfig')
+    f = open(path_file, "w")
     f.write(ret)
     f.close()
 
 
 if __name__ == "__main__":
-    get_file_content("lb-619373195.us-east-1.elb.amazonaws.com")
+    write_file_content("lb-619373195.us-east-1.elb.amazonaws.com")

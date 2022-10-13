@@ -26,8 +26,8 @@ def main():
     ec2_client = session.client('ec2')
     ec2_resource = session.resource('ec2')
 
-    default_security_group = ec2_client.describe_security_groups(
-        GroupNames=['default'])['SecurityGroups'][0]
+    #default_security_group = ec2_client.describe_security_groups(
+     #  GroupNames=['default'])['SecurityGroups'][0]
 
     vpcs = ec2_client.describe_vpcs()
     vpc_id = vpcs.get('Vpcs', [{}])[0].get('VpcId', '')
@@ -43,7 +43,7 @@ def main():
     sn_all = ec2_client.describe_subnets()
     subnets = []
     for sn in sn_all['Subnets']:
-        if sn['AvailabilityZone'] == 'us-east-1a' or\
+        if sn['AvailabilityZone'] == 'us-east-1a' or \
                 sn['AvailabilityZone'] == 'us-east-1b':
             subnets.append(sn['SubnetId'])
 
@@ -57,8 +57,10 @@ def main():
     private_key = ec2_client.describe_key_pairs()['KeyPairs'][0]
     try:
         create_instances(ec2_resource, instances_ami, "t2.micro",
-                         private_key["KeyName"], "cluster1", subnets[1], vpc_id, 1, sg['GroupId'])
-        print("Instance created")
+                         private_key["KeyName"], "cluster1", subnets[0], 1, sg['GroupId'])
+        create_instances(ec2_resource, instances_ami, "t2.micro",
+                         private_key["KeyName"], "cluster2", subnets[1], 1, sg['GroupId'])
+        print("Instances created")
     except Exception as e:
         print(e)
 
@@ -73,32 +75,43 @@ def main():
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 1:
+        if len(list(awake_instances.all())) == 2:
             awake = True
 
-    ip_addresses = ec2_client.describe_addresses([
-        {'Name': 'instance-state-name', 'Values': ['running']},
-        {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
-    ])['Addresses']
-
-    public_ips = [address["PublicIp"] for address in ip_addresses]
+    public_ips = [instance.public_ip_address for instance in awake_instances.all()]
 
     commands = ['chmod 100 install.sh', './install.sh']
+    folder_path = os.path.abspath("flask_application")
+    files = [os.path.join(folder_path, "app.py"), os.path.join(folder_path, "nginxconfig"),
+             os.path.join(folder_path, "install.sh")]
 
     for ip in public_ips:
+        time.sleep(1)
         print('Starting deployement for instance with IP: {}'.format(ip))
-        start_deployement(ip, 'flask_application', commands)
+        start_deployement(ip, files, commands)
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]
+    )
+
+    cluster2_instances = awake_instances.filter(
+        Filters=[{'Name': 'tag:Name', 'Values': ['cluster2']}]
     )
 
     cluster1_targets_ids = []
     for ins in cluster1_instances.all():
         cluster1_targets_ids.append({'Id': ins.id})
 
+    cluster2_targets_ids = []
+    for ins in cluster2_instances.all():
+        cluster2_targets_ids.append({'Id': ins.id})
+
     add_instance_to_target_group(
         elb_client, target_groups[0], cluster1_targets_ids)
+
+    add_instance_to_target_group(
+        elb_client, target_groups[1], cluster2_targets_ids
+    )
 
     print("Set up completed")
     # wait 30 seconds to simulate an interruption
@@ -106,16 +119,14 @@ def main():
     time.sleep(5)
 
     # calling endpoints. TODO: Modify this code if needed
-    threads = []
-    threads.append(Thread(target=call_endpoint_http_thread1, args=(load_balancer["LoadBalancerDNS"])))
-    threads.append(Thread(target=call_endpoint_http_thread2, args=(load_balancer["LoadBalancerDNS"])))
-    
+    threads = [Thread(target=call_endpoint_http_thread1, args=(load_balancer["LoadBalancerDNS"])),
+               Thread(target=call_endpoint_http_thread2, args=(load_balancer["LoadBalancerDNS"]))]
+
     for thread in threads:
         thread.start()
 
     for thread in threads:
         thread.join()
-
 
     # Tear down
     delete_load_balancer(elb_client, load_balancer)

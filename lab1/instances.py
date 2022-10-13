@@ -10,7 +10,7 @@ def create_key_pair(ec2_resource,
 
 
 def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
-                     subnet_id, vpc_id, count,
+                     subnet_id, count,
                      security_group_id):
     tag_spec = [
         {

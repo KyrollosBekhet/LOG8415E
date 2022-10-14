@@ -19,9 +19,10 @@ resp = repCPU['MetricDataResults'][0]
 
 
 printPlot(resp)
-
+# Get request count on load balancer
 repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 15, 'Sum', 'Count', 600)
 
+# Get average target response time on load balancer 
 repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',15,'Average','Seconds',600)
 
 def printPlot(resp):
@@ -32,8 +33,8 @@ x = np.array(resp['Timestamp'][0])
 
 for n in range(1,len(resp['Values'])):
 
-    y = np.append(x,resp['Values'][n],axis=0)
-    x = np.append(x,resp['Timestamp'][n],axis=0)
+    y = np.append(x,resp['Values'][n])
+    x = np.append(x,resp['Timestamp'][n])
 
 plt.scatter(x, y)
 plt.show()

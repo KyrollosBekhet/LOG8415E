@@ -9,9 +9,9 @@ def create_load_balancer(client, subnets, security_groups, target_groups):
     Response syntax:
         {
             LoadBalancerArn: 'string',
-              LoadBalancerDNS: 'string',
-              ListenerArn: 'string',
-              RuleArns: [first_rule_response: String[]
+            LoadBalancerDNS: 'string',
+            ListenerArn: 'string',
+            RuleArns: [first_rule_response: String[]
         },
     """
 
@@ -123,3 +123,17 @@ def add_instance_to_target_group(elb_client, cluster_arn, instances_id):
         TargetGroupArn=cluster_arn,
         Targets=instances_id
     )
+    healthy = False
+    while healthy is False:
+        nb_healthy_targets = 0
+        response = elb_client.describe_target_health(
+            TargetGroupArn=cluster_arn,
+            Targets=instances_id
+        )["TargetHealthDescriptions"]
+        for th in response:
+            if th["TargetHealth"]["State"] == "healthy":
+                nb_healthy_targets += 1
+
+        if nb_healthy_targets == len(instances_id):
+            healthy = True
+

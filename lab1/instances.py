@@ -1,3 +1,6 @@
+from threading import Thread
+
+
 def create_key_pair(ec2_resource,
                     key_name):
     """
@@ -10,7 +13,7 @@ def create_key_pair(ec2_resource,
 
 
 def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
-                     subnet_id, vpc_id, count,
+                     subnet_id, count,
                      security_group_id):
     tag_spec = [
         {
@@ -33,10 +36,22 @@ def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
 
 
 def terminate_instances(ec2_resource, instances_ids):
-    ids = []
+    threads = []
     for ins in instances_ids:
-        instance = ec2_resource.Instance(ins['Id'])
-        instance.terminate()
-        instance.wait_until_terminated()
+        thread = Thread(target=do_terminate, args=[ec2_resource, ins['Id']])
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
+        # instance = ec2_resource.Instance(ins['Id'])
+        #instance.terminate()
+        #instance.wait_until_terminated()
 
     #print(ec2_client.terminate_instances(InstanceIds=ids))
+
+
+def do_terminate(ec2_resource, instance_id):
+    instance = ec2_resource.Instance(instance_id)
+    instance.terminate()
+    instance.wait_until_terminated()

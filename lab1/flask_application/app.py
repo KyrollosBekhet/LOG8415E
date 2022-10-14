@@ -3,6 +3,7 @@ from ec2_metadata import ec2_metadata
 
 app = Flask(__name__)
 
+
 @app.route('/cluster1')
 def hello_from_instance_cluster1():
     return jsonify('Hello from cluster 1 instance: {}'.format(ec2_metadata.instance_id))

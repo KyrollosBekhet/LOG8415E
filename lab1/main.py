@@ -91,10 +91,11 @@ def main():
         'sudo apt-get install gunicorn3 -y',
         'sudo pip3 install flask',
         'sudo pip3 install ec2-metadata',
-        "sudo sed -i 's/#server_names_hash_bucket_size 64;/server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf",
+        'sudo mv nginxconfig /etc/nginx/sites-enabled',
+        "sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf",
         'sudo service nginx restart',
         'sudo apt install screen -y',
-        '/usr/bin/screen -d -m -S gunicorn3 app:app 2> /dev/null &']
+        '/usr/bin/screen -dm gunicorn3 app:app']
     folder_path = os.path.abspath("flask_application")
     files = [os.path.join(folder_path, "app.py"), os.path.join(folder_path, "nginxconfig"),
              os.path.join(folder_path, "install.sh")]
@@ -146,6 +147,7 @@ def main():
         thread.join()
 
     # Tear down
+    """
     delete_load_balancer(elb_client, load_balancer)
 
     remove_instance_from_target_group(elb_client, target_groups[0],
@@ -162,6 +164,7 @@ def main():
 
     delete_security_group(ec2_client, sg['GroupId'])
     print("Successfully deleted")
+    """
 
 
 main()

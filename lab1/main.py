@@ -26,9 +26,6 @@ def main():
     ec2_client = session.client('ec2')
     ec2_resource = session.resource('ec2')
 
-    # default_security_group = ec2_client.describe_security_groups(
-    #  GroupNames=['default'])['SecurityGroups'][0]
-
     vpcs = ec2_client.describe_vpcs()
     vpc_id = vpcs.get('Vpcs', [{}])[0].get('VpcId', '')
     sg = create_security_group(ec2_client, vpc_id)
@@ -56,10 +53,16 @@ def main():
 
     private_key = ec2_client.describe_key_pairs()['KeyPairs'][0]
     try:
-        create_instances(ec2_resource, instances_ami, "t2.micro",
-                         private_key["KeyName"], "cluster1", subnets[0], 1, sg['GroupId'])
-        create_instances(ec2_resource, instances_ami, "t2.micro",
-                         private_key["KeyName"], "cluster2", subnets[1], 1, sg['GroupId'])
+        # cluster 1 instances
+        create_instances(ec2_resource, instances_ami, "t2.large",
+                         private_key["KeyName"], "cluster1", subnets[0], 3, sg['GroupId'])
+        create_instances(ec2_resource, instances_ami, "t2.large",
+                         private_key["KeyName"], "cluster1", subnets[1], 2, sg['GroupId'])
+        # cluster 2 instances
+        create_instances(ec2_resource, instances_ami, "m4.large",
+                         private_key["KeyName"], "cluster2", subnets[1], 2, sg['GroupId'])
+        create_instances(ec2_resource, instances_ami, "m4.large",
+                         private_key["KeyName"], "cluster2", subnets[0], 2, sg['GroupId'])
         print("Instances created")
     except Exception as e:
         print(e)
@@ -75,7 +78,7 @@ def main():
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 2:
+        if len(list(awake_instances.all())) == 9:
             awake = True
 
     public_ips = [instance.public_ip_address for instance in awake_instances.all()]
@@ -123,18 +126,26 @@ def main():
     for ins in cluster2_instances.all():
         cluster2_targets_ids.append({'Id': ins.id})
 
-    add_instance_to_target_group(
-        elb_client, target_groups[0], cluster1_targets_ids)
+    threads = [Thread(target=add_instance_to_target_group, args=[elb_client, target_groups[0], cluster1_targets_ids]),
+               Thread(target=add_instance_to_target_group, args=[elb_client, target_groups[1], cluster2_targets_ids])]
+    #add_instance_to_target_group(
+     #   elb_client, target_groups[0], cluster1_targets_ids)
 
-    add_instance_to_target_group(
-        elb_client, target_groups[1], cluster2_targets_ids
-    )
+#    add_instance_to_target_group(
+ #       elb_client, target_groups[1], cluster2_targets_ids
+  #  )
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
     print("Set up completed")
     # wait 30 seconds to simulate an interruption
 
     # TODO: Modify this sleep
-    time.sleep(60)
+    # time.sleep(60)
     load_balancer_dns = load_balancer["LoadBalancerDNS"]
     # calling endpoints. TODO: Modify this code if needed
     threads = [Thread(target=call_endpoint_http_thread1, args=[load_balancer_dns]),
@@ -146,8 +157,10 @@ def main():
     for thread in threads:
         thread.join()
 
+    print("Requests were sent")
+    # TODO: include cloud watch before tear down
     # Tear down
-    """
+    print("Tearing down")
     delete_load_balancer(elb_client, load_balancer)
 
     remove_instance_from_target_group(elb_client, target_groups[0],
@@ -160,11 +173,11 @@ def main():
 
     terminate_instances(ec2_resource, cluster1_targets_ids)
     terminate_instances(ec2_resource, cluster2_targets_ids)
-    # time.sleep(5)
+    #time.sleep(5)
 
     delete_security_group(ec2_client, sg['GroupId'])
     print("Successfully deleted")
-    """
+
 
 
 main()

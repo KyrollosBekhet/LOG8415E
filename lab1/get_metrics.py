@@ -18,15 +18,15 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
     response = client.get_metric_data(
         MetricDataQueries=[
             {
-                'Id': metric_id
+                'Id': metric_id,
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
-                            'MetricName': metric_name        
+                            'MetricName': metric_name ,       
                     },
                     'Period': period,
                     'Stat': stat,
-                    'Unit': unit
+                    'Unit': unit,
                 },
                 'Period': period, # Requests interval
             }
@@ -34,7 +34,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
         StartTime=datetime.utcnow()-timedelta(seconds=time), # Requests metrics from 10 minutes ago
         EndTime=datetime.utcnow(),
         LabelOptions={
-            'Timezone': -0400 # Timezone offset from UTC for Eastern Time
+            'Timezone': -400 # Timezone offset from UTC for Eastern Time
         }
     )
     

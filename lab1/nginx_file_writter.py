@@ -15,7 +15,7 @@ import os
 def write_file_content(dns):
     ret = "server " + "{\n" + "\t listen 80;\n" +\
           "\t server_name {};\n".format(dns) + "\n" +\
-          "\t location" + "/ {\n" +\
+          "\t location " + "/ {\n" +\
           "\t \t proxy_pass http://127.0.0.1:8000;\n"\
           + "\t }\n" \
           + "\t".join("}")

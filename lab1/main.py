@@ -26,8 +26,8 @@ def main():
     ec2_client = session.client('ec2')
     ec2_resource = session.resource('ec2')
 
-    #default_security_group = ec2_client.describe_security_groups(
-     #  GroupNames=['default'])['SecurityGroups'][0]
+    # default_security_group = ec2_client.describe_security_groups(
+    #  GroupNames=['default'])['SecurityGroups'][0]
 
     vpcs = ec2_client.describe_vpcs()
     vpc_id = vpcs.get('Vpcs', [{}])[0].get('VpcId', '')
@@ -100,13 +100,11 @@ def main():
              os.path.join(folder_path, "install.sh")]
 
     time.sleep(30)
-    threads=[]
     for ip in public_ips:
-        #thread = Thread(target=start_deployement, args=((ip, files, commands)))
-        #thread.start()
-        #threads.append(thread)
+        # thread = Thread(target=start_deployement, args=((ip, files, commands)))
+        # thread.start()
+        # threads.append(thread)
         start_deployement(ip, files, commands)
-    
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]
@@ -134,11 +132,12 @@ def main():
     print("Set up completed")
     # wait 30 seconds to simulate an interruption
 
-    time.sleep(5)
+    # TODO: Modify this sleep
+    time.sleep(60)
     load_balancer_dns = load_balancer["LoadBalancerDNS"]
     # calling endpoints. TODO: Modify this code if needed
-    threads = [Thread(target=call_endpoint_http_thread1, args=(load_balancer_dns)),
-               Thread(target=call_endpoint_http_thread2, args=(load_balancer_dns))]
+    threads = [Thread(target=call_endpoint_http_thread1, args=[load_balancer_dns]),
+               Thread(target=call_endpoint_http_thread2, args=[load_balancer_dns])]
 
     for thread in threads:
         thread.start()

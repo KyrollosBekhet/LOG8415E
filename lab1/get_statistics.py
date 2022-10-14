@@ -26,14 +26,14 @@ repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','Target
 
 def printPlot(resp):
 
-x = np.array(resp['Values'][0])
-y = np.array(resp['Timestamp'][0])
+y = np.array(resp['Values'][0])
+x = np.array(resp['Timestamp'][0])
 
 
 for n in range(1,len(resp['Values'])):
 
-    x = np.append(x,resp['Values'][n],axis=0)
-    y = np.append(x,resp['Timestamp'][n],axis=0)
+    y = np.append(x,resp['Values'][n],axis=0)
+    x = np.append(x,resp['Timestamp'][n],axis=0)
 
 plt.scatter(x, y)
 plt.show()

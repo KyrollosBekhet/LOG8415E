@@ -80,15 +80,33 @@ def main():
 
     public_ips = [instance.public_ip_address for instance in awake_instances.all()]
 
-    commands = ['chmod 100 install.sh', './install.sh']
+    commands = [
+        'chmod 777 install.sh',
+        "./install.sh",
+        'sudo apt-get update -y',
+        "echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections",
+        'sudo apt-get install -y -q',
+        'sudo apt-get install python3-pip -y',
+        'sudo apt-get install nginx -y',
+        'sudo apt-get install gunicorn3 -y',
+        'sudo pip3 install flask',
+        'sudo pip3 install ec2-metadata',
+        "sudo sed -i 's/#server_names_hash_bucket_size 64;/server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf",
+        'sudo service nginx restart',
+        'sudo apt install screen -y',
+        '/usr/bin/screen -d -m -S gunicorn3 app:app 2> /dev/null &']
     folder_path = os.path.abspath("flask_application")
     files = [os.path.join(folder_path, "app.py"), os.path.join(folder_path, "nginxconfig"),
              os.path.join(folder_path, "install.sh")]
 
+    time.sleep(30)
+    threads=[]
     for ip in public_ips:
-        time.sleep(1)
-        print('Starting deployement for instance with IP: {}'.format(ip))
+        #thread = Thread(target=start_deployement, args=((ip, files, commands)))
+        #thread.start()
+        #threads.append(thread)
         start_deployement(ip, files, commands)
+    
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]
@@ -117,10 +135,10 @@ def main():
     # wait 30 seconds to simulate an interruption
 
     time.sleep(5)
-
+    load_balancer_dns = load_balancer["LoadBalancerDNS"]
     # calling endpoints. TODO: Modify this code if needed
-    threads = [Thread(target=call_endpoint_http_thread1, args=(load_balancer["LoadBalancerDNS"])),
-               Thread(target=call_endpoint_http_thread2, args=(load_balancer["LoadBalancerDNS"]))]
+    threads = [Thread(target=call_endpoint_http_thread1, args=(load_balancer_dns)),
+               Thread(target=call_endpoint_http_thread2, args=(load_balancer_dns))]
 
     for thread in threads:
         thread.start()
@@ -133,10 +151,14 @@ def main():
 
     remove_instance_from_target_group(elb_client, target_groups[0],
                                       cluster1_targets_ids)
+
+    remove_instance_from_target_group(elb_client, target_groups[1],
+                                      cluster1_targets_ids)
     for target_group in target_groups:
         delete_target_group(elb_client, target_group)
 
     terminate_instances(ec2_resource, cluster1_targets_ids)
+    terminate_instances(ec2_resource, cluster2_targets_ids)
     # time.sleep(5)
 
     delete_security_group(ec2_client, sg['GroupId'])

@@ -2,10 +2,6 @@ from datetime import datetime, timedelta
 import boto3
 
 
-
-
-client = boto3.client('cloudwatch', region_name='us-west-2')
-
 # getMetric: get a specific CloudWatch metric.
 #
 #   client: The CloudWatch client
@@ -22,7 +18,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
     response = client.get_metric_data(
         MetricDataQueries=[
             {
-                'Id': 'cpu_usage'
+                'Id': metric_id
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,

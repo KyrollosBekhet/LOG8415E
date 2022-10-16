@@ -1,30 +1,27 @@
-from tokenize import String
 import paramiko
 from scp import SCPClient
-import os
+from io import StringIO
 
 
-def start_deployement(ip, files, commands):
+def start_deployment(ip, files, commands, key_material):
     """
     This function starts the deployement process for the instance with the provided ip address.
     The deployement script is runned on the instance. The provided deployement commands are also 
     runned on the instance before closing the connection.
     """
-    connection = instance_connection(ip)
+    connection = instance_connection(ip, key_material)
     transfer_file(connection, files)
     run_commands(connection, commands)
     connection.close()
 
 
-def instance_connection(instance_ip):
+def instance_connection(instance_ip, key_material):
     """
     This function initialize a connection with the ec2 instance.
     """
     ssh_username = "ubuntu"
-    ssh_key_file = os.path.abspath("labsuser.pem")
-    print(ssh_key_file)
-
-    rsa_key = paramiko.RSAKey.from_private_key_file(ssh_key_file)
+    ssh_key_file = StringIO(key_material)
+    rsa_key = paramiko.RSAKey.from_private_key(ssh_key_file)
 
     ssh_connection = paramiko.SSHClient()
     ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())

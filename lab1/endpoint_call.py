@@ -1,5 +1,4 @@
 import traceback
-from importlib.resources import path
 import requests
 from threading import Thread
 import time

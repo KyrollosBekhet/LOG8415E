@@ -51,18 +51,18 @@ def main():
 
     instances_ami = 'ami-08c40ec9ead489470'
 
-    private_key = ec2_client.describe_key_pairs()['KeyPairs'][0]
+    key_pair = create_key_pair(ec2_client, "key_pair")
     try:
         # cluster 1 instances
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[0], 3, sg['GroupId'])
+                         "key_pair", "cluster1", subnets[0], 3, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[1], 2, sg['GroupId'])
+                         "key_pair", "cluster1", subnets[1], 2, sg['GroupId'])
         # cluster 2 instances
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[1], 2, sg['GroupId'])
+                         "key_pair", "cluster2", subnets[1], 2, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[0], 2, sg['GroupId'])
+                         "key_pair", "cluster2", subnets[0], 2, sg['GroupId'])
         print("Instances created")
     except Exception as e:
         print(e)
@@ -108,7 +108,7 @@ def main():
         # thread = Thread(target=start_deployement, args=((ip, files, commands)))
         # thread.start()
         # threads.append(thread)
-        start_deployement(ip, files, commands)
+        start_deployment(ip, files, commands, key_pair["KeyMaterial"])
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]
@@ -173,6 +173,7 @@ def main():
 
     terminate_instances(ec2_resource, cluster1_targets_ids)
     terminate_instances(ec2_resource, cluster2_targets_ids)
+    ec2_client.delete_key_pair(KeyName="key_pair")
     #time.sleep(5)
 
     delete_security_group(ec2_client, sg['GroupId'])

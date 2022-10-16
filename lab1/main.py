@@ -104,11 +104,15 @@ def main():
              os.path.join(folder_path, "install.sh")]
 
     time.sleep(30)
+    deploy_threads = []
     for ip in public_ips:
-        # thread = Thread(target=start_deployement, args=((ip, files, commands)))
-        # thread.start()
-        # threads.append(thread)
-        start_deployment(ip, files, commands, key_pair["KeyMaterial"])
+        deploy_thread = Thread(target=start_deployment, args=(ip, files, commands, key_pair["KeyMaterial"]))
+        deploy_thread.start()
+        deploy_threads.append(deploy_thread)
+        #start_deployment(ip, files, commands, key_pair["KeyMaterial"])
+
+    for deploy_thread in deploy_threads:
+        deploy_thread.join()
 
     cluster1_instances = awake_instances.filter(
         Filters=[{'Name': 'tag:Name', 'Values': ['cluster1']}]

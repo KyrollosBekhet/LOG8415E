@@ -9,10 +9,15 @@ def start_deployment(ip, files, commands, key_material):
     The deployement script is runned on the instance. The provided deployement commands are also 
     runned on the instance before closing the connection.
     """
-    connection = instance_connection(ip, key_material)
-    transfer_file(connection, files)
-    run_commands(connection, commands)
-    connection.close()
+    try:
+        connection = instance_connection(ip, key_material)
+        transfer_file(connection, files)
+        run_commands(connection, commands)
+        connection.close()
+    except Exception as e:
+        print(e)
+    finally:
+        exit(None)
 
 
 def instance_connection(instance_ip, key_material):

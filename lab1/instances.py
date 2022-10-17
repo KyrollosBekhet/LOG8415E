@@ -26,10 +26,13 @@ def create_instances(ec2_resource, image_id, instance_type, key_name, tags,
             ]
         },
     ]
+    monitoring = {
+        'Enabled' : True,
+    }
     instance_params = {
         'ImageId': image_id, 'InstanceType': instance_type,
         'KeyName': key_name, 'SecurityGroupIds': [security_group_id],
-        'SubnetId': subnet_id, 'TagSpecifications': tag_spec
+        'SubnetId': subnet_id, 'TagSpecifications': tag_spec, 'Monitoring': monitoring
     }
     instances = ec2_resource.create_instances(**instance_params, MinCount=count, MaxCount=count)
     print(instances)

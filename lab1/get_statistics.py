@@ -17,10 +17,22 @@ def getStatistics(session,instance_ids):
     try:
         repCPU = getMetricInstance(client, instance_ids,'cpu_usage','AWS/EC2','CPUUtilization',30,'Sum','Percent',600)
         print(repCPU)
-        printPlot(repCPU, "test","CPU Utilization")
+        printPlot(repCPU, "test.png","CPU Utilization")
     except Exception as e:
         print(e)
-    #resp = repCPU['MetricDataResults'][0]
+        
+    try:
+        repCPU = getMetricInstance(client, instance_ids,'network_in','AWS/EC2','NetworkIn',30,'Sum','Bytes',600)
+        print(repCPU)
+        printPlot(repCPU, "test.png","CPU Utilization")
+    except Exception as e:
+        print(e)
+    try:
+        repCPU = getMetricInstance(client, instance_ids,'network_out','AWS/EC2','NetworkOut',30,'Sum','Bytes',600)
+        print(repCPU)
+        printPlot(repCPU, "test.png","CPU Utilization")
+    except Exception as e:
+        print(e)
 
 
     #printPlot(resp)
@@ -37,9 +49,9 @@ def getStatistics(session,instance_ids):
 def printPlot(resp, fileName, ylabel):
 
     y = np.array(resp['MetricDataResults'][0]['Values'])
-    x = np.array(resp['MetricDataResults'][0]['Timestamp'])
-
-
+    x = np.array(resp['MetricDataResults'][0]['Timestamps'])
+    print(x)
+    print(y)
     #for n in range(1,len(resp['Values'])):
 
     #    y = np.append(x,resp['Values'][n])
@@ -50,7 +62,7 @@ def printPlot(resp, fileName, ylabel):
     for r in range(1,resp['MetricDataResults']):
         y1 = np.array(resp['MetricDataResults'][r]['Values'])
         plt.scatter(x,y1)
-        
+        print(y1)
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)
         

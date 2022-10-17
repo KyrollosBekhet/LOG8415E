@@ -12,6 +12,8 @@ from endpoint_call import *
 
 from nginx_file_writter import *
 
+from get_statistics import getStatistics
+
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
  and target groups. Also to identify what is needed to create the load balancer
@@ -55,18 +57,20 @@ def main():
     try:
         # cluster 1 instances
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[0], 3, sg['GroupId'])
+                         private_key["KeyName"], "cluster1", subnets[0], 1, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[1], 2, sg['GroupId'])
+                         private_key["KeyName"], "cluster1", subnets[1], 1, sg['GroupId'])
         # cluster 2 instances
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[1], 2, sg['GroupId'])
+                         private_key["KeyName"], "cluster2", subnets[1], 1, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[0], 2, sg['GroupId'])
+                         private_key["KeyName"], "cluster2", subnets[0], 1, sg['GroupId'])
         print("Instances created")
     except Exception as e:
         print(e)
 
+
+    
     awake = False
     # for now number of instances are 1
     awake_instances = None
@@ -159,6 +163,8 @@ def main():
 
     print("Requests were sent")
     # TODO: include cloud watch before tear down
+    
+    getStatistics()
     # Tear down
     print("Tearing down")
     delete_load_balancer(elb_client, load_balancer)

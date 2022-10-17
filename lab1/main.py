@@ -10,6 +10,7 @@ from threading import Thread
 
 import boto3
 import time
+from get_statistics import getStatistics
 
 
 if __name__ == '__main__':
@@ -58,9 +59,13 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 
+
+    
+    awake = False
+    # for now number of instances are 1
     awake_instances = None
     # Wait for all instances to instanciate
-    while len(list(awake_instances.all())) != 9:
+    while awake is False:
         # Name filter used to prevent existing instances from interfering
         awake_instances = ec2_resource.instances.filter(
             Filters=[
@@ -68,6 +73,11 @@ if __name__ == '__main__':
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
+        if len(list(awake_instances.all())) == 9:
+            awake = True
+        
+        else:
+            time.sleep(0.5)
 
     public_ips = [instance.public_ip_address for instance in awake_instances.all()]
 
@@ -153,7 +163,20 @@ if __name__ == '__main__':
 
     print("Requests were sent")
 
-    # TODO: include cloud watch before tear down
+    try:
+        # Get all instances ids
+        instances_ids = []
+        for instance in ec2_resource.instances.filter(
+            Filters=[
+                {'Name': 'instance-state-name', 'Values': ['running']},
+                {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
+            ]
+        ):
+            instances_ids.append(instance.id)
+    
+        getStatistics(session,instances_ids)
+    except Exception as e:
+        print(e)
 
     # Tear down
     print("Tearing down")

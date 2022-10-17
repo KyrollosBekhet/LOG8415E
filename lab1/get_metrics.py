@@ -16,9 +16,8 @@ import boto3
 def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, time, session):
     
     
-    resp = session.client(elvb2).describe_target_groups()
+    resp = session.client('elbv2').describe_target_groups()
     
-
 
     response = client.get_metric_data(
         MetricDataQueries=[
@@ -31,12 +30,12 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                             'Dimensions': [ 
                                 {
                                     "Name":"LoadBalancer",
-                                    "Value":resp['TargetGroups'][0]['LoadBalancerArns'][0].split(':')[-1],
+                                    "Value":resp['TargetGroups'][0]['LoadBalancerArns'][0],
                                                             
                                 },
                                 {
                                     "Name":"TargetGroup",
-                                    "Value":resp['TargetGroups'][0]['TargetGroupArn'].split(':')[-1],
+                                    "Value":resp['TargetGroups'][0]['TargetGroupArn'],
                             
                                 }]      
                     },
@@ -54,12 +53,12 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                             'Dimensions': [ 
                                 {
                                     "Name":"LoadBalancer",
-                                    "Value":resp['TargetGroups'][1]['LoadBalancerArn'][0].split(':')[-1],
+                                    "Value":resp['TargetGroups'][1]['LoadBalancerArns'][0],
                                                             
                                 },
                                 {
                                     "Name":"TargetGroup",
-                                    "Value":resp['TargetGroups'][1]['TargetGroupArn'].split(':')[-1],
+                                    "Value":resp['TargetGroups'][1]['TargetGroupArn'],
                             
                                 }]      
                     },

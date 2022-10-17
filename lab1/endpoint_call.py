@@ -27,6 +27,8 @@ def round_robin_call_endpoint_http(load_balancer_dns, turns):
     except Exception as ex:
         print("Exception thrown thread {}.\n with stacktrace".format(str(Thread.name)))
         traceback.print_exc()
+    finally:
+        exit(None)
 
 
 def send_requests_thread1(load_balancer_dns):

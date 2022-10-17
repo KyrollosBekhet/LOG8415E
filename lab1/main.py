@@ -82,7 +82,7 @@ def main():
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 9:
+        if len(list(awake_instances.all())) == 4:
             awake = True
 
     public_ips = [instance.public_ip_address for instance in awake_instances.all()]
@@ -163,8 +163,15 @@ def main():
 
     print("Requests were sent")
     # TODO: include cloud watch before tear down
+    try:
+        # Get all instances ids
+        instances_ids = []
+        for instance in ec2.instances.all():
+            instances_ids.append(instance.id)
     
-    getStatistics()
+        getStatistics(session,instances_ids)
+    except Exception as e:
+        print(e)
     # Tear down
     print("Tearing down")
     delete_load_balancer(elb_client, load_balancer)

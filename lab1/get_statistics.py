@@ -1,17 +1,20 @@
 import boto3
 import matplotlib.pyplot as plt
 import numpy as np
-from get_metrics import getMetric
+from get_metrics import getMetric, getMetricInstance
 
 
 
-def getStatistics(session):
+def getStatistics(session,instance_ids):
 
 
     client = session.client('cloudwatch')
 
     # Get CPU Usage on instances
-    repCPU = getMetric(client,'cpu_usage','AWS/EC2','CPUUtilization',30,'Sum','Percent',600)
+    
+    
+    
+    repCPU = getMetricInstance(client, instance_ids,'cpu_usage','AWS/EC2','CPUUtilization',30,'Sum','Percent',600)
 
     print(repCPU)
     
@@ -21,11 +24,11 @@ def getStatistics(session):
 
     #printPlot(resp)
     # Get request count on load balancer
-    repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600)
-    print(repREQCNT)
+    
     #resp = repREQCNT['MetricDataResults'][0]
     #printPlot(resp)
-
+    repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600)
+    print(repREQCNT)
     # Get average target response time on load balancer 
     repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600)
     print(repTIME)

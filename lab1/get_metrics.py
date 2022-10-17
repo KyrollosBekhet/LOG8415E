@@ -34,7 +34,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
         StartTime=datetime.utcnow()-timedelta(seconds=time), # Requests metrics from 10 minutes ago
         EndTime=datetime.utcnow(),
         LabelOptions={
-            'Timezone': -400 # Timezone offset from UTC for Eastern Time
+            'Timezone': '-0400' # Timezone offset from UTC for Eastern Time
         }
     )
     

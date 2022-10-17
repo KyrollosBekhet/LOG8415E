@@ -73,7 +73,7 @@ if __name__ == '__main__':
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 9:
+        if len(list(awake_instances.all())) == 4:
             awake = True
         
         else:
@@ -177,6 +177,7 @@ if __name__ == '__main__':
         getStatistics(session,instances_ids)
     except Exception as e:
         print(e)
+
 
     # Tear down
     print("Tearing down")

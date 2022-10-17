@@ -22,13 +22,99 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
-                            'MetricName': metric_name ,       
+                            'MetricName': metric_name ,    
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    #'Unit': unit,
+                }
+            }
+        ],
+        StartTime=datetime.utcnow()-timedelta(seconds=time), # Requests metrics from 10 minutes ago
+        EndTime=datetime.utcnow(),
+        LabelOptions={
+            'Timezone': '-0400' # Timezone offset from UTC for Eastern Time
+        }
+    )
+    
+    return response
+    
+def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, period, stat, unit, time):
+
+    response = client.get_metric_data(
+        MetricDataQueries=[
+            {
+                'Id': metric_id,
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[0],
+                            
+                                }]       
                     },
                     'Period': period,
                     'Stat': stat,
                     'Unit': unit,
                 }
-            }
+            },
+            {
+                'Id': metric_id,
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[1],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': metric_id,
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[2],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': metric_id,
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[3],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
         ],
         StartTime=datetime.utcnow()-timedelta(seconds=time), # Requests metrics from 10 minutes ago
         EndTime=datetime.utcnow(),

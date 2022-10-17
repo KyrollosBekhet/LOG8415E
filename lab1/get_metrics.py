@@ -62,7 +62,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id,
+                'Id': metric_id2,
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
@@ -80,7 +80,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id,
+                'Id': metric_id3,
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
@@ -98,7 +98,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id,
+                'Id': metric_id4,
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,

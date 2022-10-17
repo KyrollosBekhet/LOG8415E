@@ -29,7 +29,7 @@ def getStatistics():
     # Get average target response time on load balancer 
     repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',15,'Average','Seconds',600)
 
-def printPlot(resp):
+def printPlot(resp, fileName):
 
     y = np.array(resp['Values'][0])
     x = np.array(resp['Timestamp'][0])
@@ -41,5 +41,5 @@ def printPlot(resp):
         x = np.append(x,resp['Timestamp'][n])
 
     plt.scatter(x, y)
-    plt.show()
+    plt.savefig(fileName)
 

@@ -21,22 +21,22 @@ def getStatistics(session,instance_ids):
         print(e)
         
     try:
-        repCPU = getMetricInstance(client, instance_ids,'network_in','AWS/EC2','NetworkIn',30,'Sum','Bytes',600)
-        print(repCPU)
-        printPlot(repCPU, "network_in.png","NetworkIn")
+        repNetIn = getMetricInstance(client, instance_ids,'network_in','AWS/EC2','NetworkIn',30,'Sum','Bytes',600)
+        print(repNetIn)
+        printPlot(repNetIn, "network_in.png","NetworkIn")
     except Exception as e:
         print(e)
     try:
-        repCPU = getMetricInstance(client, instance_ids,'network_out','AWS/EC2','NetworkOut',30,'Sum','Bytes',600)
-        print(repCPU)
-        printPlot(repCPU, "network_out.png","NetworkOut")
+        repNetOut = getMetricInstance(client, instance_ids,'network_out','AWS/EC2','NetworkOut',30,'Sum','Bytes',600)
+        print(repNetOut)
+        printPlot(repNetOut, "network_out.png","NetworkOut")
     except Exception as e:
         print(e)
     
-    repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600)
+    repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600, session)
     print(repREQCNT)
     # Get average target response time on load balancer 
-    repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600)
+    repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600, session)
     print(repTIME)
 
 def printPlot(resp, fileName, ylabel):
@@ -57,7 +57,7 @@ def printPlot(resp, fileName, ylabel):
     for r in range(1,len(resp['MetricDataResults'])):
         x1 = np.array(resp['MetricDataResults'][r]['Timestamps'])
         y1 = np.array(resp['MetricDataResults'][r]['Values'])
-        plt.scatter(x1,y1)
+        plt.plot(x1,y1)
         print(y1)
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)

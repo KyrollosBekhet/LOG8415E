@@ -13,7 +13,12 @@ import boto3
 #   unit: The unit used for the metric (Percent, Seconds, Count, etc.)
 #   time: The delta between now and the start time of the metric recording (seconds) 
 #
-def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, time):
+def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, time, session):
+    
+    
+    resp = session.client(elvb2).describe_target_groups()
+    
+
 
     response = client.get_metric_data(
         MetricDataQueries=[
@@ -22,7 +27,41 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
-                            'MetricName': metric_name ,    
+                            'MetricName': metric_name ,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"LoadBalancer",
+                                    "Value":resp['TargetGroups'][0]['LoadBalancerArns'][0].split(':')[-1],
+                                                            
+                                },
+                                {
+                                    "Name":"TargetGroup",
+                                    "Value":resp['TargetGroups'][0]['TargetGroupArn'].split(':')[-1],
+                            
+                                }]      
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    #'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name ,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"LoadBalancer",
+                                    "Value":resp['TargetGroups'][1]['LoadBalancerArn'][0].split(':')[-1],
+                                                            
+                                },
+                                {
+                                    "Name":"TargetGroup",
+                                    "Value":resp['TargetGroups'][1]['TargetGroupArn'].split(':')[-1],
+                            
+                                }]      
                     },
                     'Period': period,
                     'Stat': stat,
@@ -62,7 +101,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id2,
+                'Id': "metric_id2",
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
@@ -80,7 +119,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id3,
+                'Id': "metric_id3",
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,
@@ -98,7 +137,7 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                 }
             },
             {
-                'Id': metric_id4,
+                'Id': "metric_id4",
                 'MetricStat': {
                     'Metric': {
                             'Namespace': namespace,

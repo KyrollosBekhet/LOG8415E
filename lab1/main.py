@@ -166,7 +166,12 @@ def main():
     try:
         # Get all instances ids
         instances_ids = []
-        for instance in ec2.instances.all():
+        for instance in ec2_resource.instances.filter(
+            Filters=[
+                {'Name': 'instance-state-name', 'Values': ['running']},
+                {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
+            ]
+        ):
             instances_ids.append(instance.id)
     
         getStatistics(session,instances_ids)

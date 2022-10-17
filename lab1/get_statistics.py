@@ -52,12 +52,12 @@ def printPlot(resp, fileName, ylabel):
     #    y = np.append(x,resp['Values'][n])
     #    x = np.append(x,resp['Timestamp'][n])
 
-    plt.plot(x, y)
+    plt.plot(x, y, label=resp['MetricDataResults'][0]['Label'])
     
     for r in range(1,len(resp['MetricDataResults'])):
         x1 = np.array(resp['MetricDataResults'][r]['Timestamps'])
         y1 = np.array(resp['MetricDataResults'][r]['Values'])
-        plt.plot(x1,y1)
+        plt.plot(x1,y1,label=resp['MetricDataResults'][r]['Label'])
         print(y1)
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)

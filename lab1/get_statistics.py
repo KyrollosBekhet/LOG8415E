@@ -13,33 +13,26 @@ def getStatistics(session,instance_ids):
 
     # Get CPU Usage on instances
     
-    
     try:
         repCPU = getMetricInstance(client, instance_ids,'cpu_usage','AWS/EC2','CPUUtilization',30,'Sum','Percent',600)
         print(repCPU)
-        printPlot(repCPU, "test.png","CPU Utilization")
+        printPlot(repCPU, "cpu_utilization.png","CPU Utilization")
     except Exception as e:
         print(e)
         
     try:
         repCPU = getMetricInstance(client, instance_ids,'network_in','AWS/EC2','NetworkIn',30,'Sum','Bytes',600)
         print(repCPU)
-        printPlot(repCPU, "test.png","CPU Utilization")
+        printPlot(repCPU, "network_in.png","NetworkIn")
     except Exception as e:
         print(e)
     try:
         repCPU = getMetricInstance(client, instance_ids,'network_out','AWS/EC2','NetworkOut',30,'Sum','Bytes',600)
         print(repCPU)
-        printPlot(repCPU, "test.png","CPU Utilization")
+        printPlot(repCPU, "network_out.png","NetworkOut")
     except Exception as e:
         print(e)
-
-
-    #printPlot(resp)
-    # Get request count on load balancer
     
-    #resp = repREQCNT['MetricDataResults'][0]
-    #printPlot(resp)
     repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600)
     print(repREQCNT)
     # Get average target response time on load balancer 
@@ -50,21 +43,25 @@ def printPlot(resp, fileName, ylabel):
 
     y = np.array(resp['MetricDataResults'][0]['Values'])
     x = np.array(resp['MetricDataResults'][0]['Timestamps'])
-    print(x)
-    print(y)
+    #print(x)
+    #print(y)
+    #print(x.shape)
+    #print(y.shape)
     #for n in range(1,len(resp['Values'])):
 
     #    y = np.append(x,resp['Values'][n])
     #    x = np.append(x,resp['Timestamp'][n])
 
-    plt.scatter(x, y)
+    plt.plot(x, y)
     
-    for r in range(1,resp['MetricDataResults']):
+    for r in range(1,len(resp['MetricDataResults'])):
+        x1 = np.array(resp['MetricDataResults'][r]['Timestamps'])
         y1 = np.array(resp['MetricDataResults'][r]['Values'])
-        plt.scatter(x,y1)
+        plt.scatter(x1,y1)
         print(y1)
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)
         
     plt.savefig(fileName)
+    plt.clf()
 

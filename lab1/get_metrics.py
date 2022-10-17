@@ -27,8 +27,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                     'Period': period,
                     'Stat': stat,
                     'Unit': unit,
-                },
-                'Period': period, # Requests interval
+                }
             }
         ],
         StartTime=datetime.utcnow()-timedelta(seconds=time), # Requests metrics from 10 minutes ago

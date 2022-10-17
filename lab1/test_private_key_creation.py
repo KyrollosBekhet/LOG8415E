@@ -46,7 +46,7 @@ def run():
 
     commands = [
         "echo hi",
-        "mkdir folder"
+        "mkdir folder",
         "ls",
         "whoami"
     ]
@@ -80,7 +80,7 @@ def run():
         terminate_instances(ec2_resource, ids)
         ec2_client.delete_key_pair(KeyName="key_pair")
         delete_security_group(ec2_client, sg['GroupId'])
-
+        
 
 if __name__ == "__main__":
     run()

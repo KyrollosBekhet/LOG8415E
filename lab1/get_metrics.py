@@ -17,7 +17,25 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
     
     
     resp = session.client('elbv2').describe_target_groups()
-    print(resp['TargetGroups'][0]['LoadBalancerArns'][0])
+    
+    load_balancer = resp['TargetGroups'][0]['LoadBalancerArns'][0]
+    target_group1 = resp['TargetGroups'][0]['TargetGroupArn']
+    target_group2 = resp['TargetGroups'][1]['TargetGroupArn']
+
+    print(load_balancer)
+    print(target_group2)
+    print(target_group1)
+
+    tgarray1 = target_group1.split(':')
+    tgstring1 = tgarray1[-1]
+
+    tgarray2 = target_group2.split(':')
+    tgstring2 = tgarray2[-1]
+
+    lbarray = load_balancer.split(':')
+    lbstring = lbarray[-1]
+    lbarray2 = lbstring.split('/')
+    lbstring2 = lbarray2[1] + '/' + lbarray2[2] + '/' + lbarray2[3]
 
     response = client.get_metric_data(
         MetricDataQueries=[
@@ -27,17 +45,17 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                     'Metric': {
                             'Namespace': namespace,
                             'MetricName': metric_name ,
-                            'Dimensions': [ 
+                            'Dimensions': [
                                 {
-                                    "Name":"LoadBalancer",
-                                    "Value":resp['TargetGroups'][0]['LoadBalancerArns'][0],
-                                                            
+                                    "Name": "TargetGroup",
+                                    "Value": tgstring1,
+
                                 },
                                 {
-                                    "Name":"TargetGroup",
-                                    "Value":resp['TargetGroups'][0]['TargetGroupArn'],
-                            
-                                }]      
+                                    "Name":"LoadBalancer",
+                                    "Value":lbstring2,
+                                                            
+                                }]
                     },
                     'Period': period,
                     'Stat': stat,
@@ -50,17 +68,17 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                     'Metric': {
                             'Namespace': namespace,
                             'MetricName': metric_name ,
-                            'Dimensions': [ 
+                            'Dimensions': [
                                 {
-                                    "Name":"LoadBalancer",
-                                    "Value":resp['TargetGroups'][1]['LoadBalancerArns'][0],
-                                                            
+                                    "Name": "TargetGroup",
+                                    "Value": tgstring2,
+
                                 },
                                 {
-                                    "Name":"TargetGroup",
-                                    "Value":resp['TargetGroups'][1]['TargetGroupArn'],
-                            
-                                }]      
+                                    "Name":"LoadBalancer",
+                                    "Value":lbstring2,
+                                                            
+                                }]
                     },
                     'Period': period,
                     'Stat': stat,

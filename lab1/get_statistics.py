@@ -4,7 +4,9 @@ import numpy as np
 from get_metrics import getMetric, getMetricInstance
 
 
-
+# Get all cloudwatch statistics
+#   instance_ids: array containing all instance ids
+#   session: session of boto3
 def getStatistics(session,instance_ids):
 
     print(instance_ids)
@@ -38,19 +40,16 @@ def getStatistics(session,instance_ids):
     # Get average target response time on load balancer 
     repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600, session)
     print(repTIME)
-
+    
+    
+# Prints the plot
+#   resp: the response dictionnary 
+#   fileName: the file name to be used
+#   ylabel: the label to be used on the y axis
 def printPlot(resp, fileName, ylabel):
 
     y = np.array(resp['MetricDataResults'][0]['Values'])
     x = np.array(resp['MetricDataResults'][0]['Timestamps'])
-    #print(x)
-    #print(y)
-    #print(x.shape)
-    #print(y.shape)
-    #for n in range(1,len(resp['Values'])):
-
-    #    y = np.append(x,resp['Values'][n])
-    #    x = np.append(x,resp['Timestamp'][n])
 
     plt.plot(x, y, label=resp['MetricDataResults'][0]['Label'])
     
@@ -61,7 +60,7 @@ def printPlot(resp, fileName, ylabel):
         print(y1)
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)
-        
+    plt.legend(loc="upper left")
     plt.savefig(fileName)
     plt.clf()
 

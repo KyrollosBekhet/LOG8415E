@@ -17,7 +17,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
     
     
     resp = session.client('elbv2').describe_target_groups()
-    
+    print(resp['TargetGroups'][0]['LoadBalancerArns'][0])
 
     response = client.get_metric_data(
         MetricDataQueries=[
@@ -77,6 +77,19 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
     
     return response
     
+    
+# getMetric: get a specific CloudWatch instance metric.
+#
+#   client: The CloudWatch client
+#   instance_ids: Array containing each instance ids
+#   metric_id: The metric id, to be used in graphics
+#   namespace: The namespace where the metric is
+#   metric_name: The name of the metric
+#   period: Period between each data point, in seconds
+#   stat: The stat used for the metric (SampleCount, Average, Sum, Minimum, Maximum)
+#   unit: The unit used for the metric (Percent, Seconds, Count, etc.)
+#   time: The delta between now and the start time of the metric recording (seconds)
+
 def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, period, stat, unit, time):
 
     response = client.get_metric_data(

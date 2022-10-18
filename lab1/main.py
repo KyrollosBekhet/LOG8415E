@@ -12,6 +12,8 @@ from endpoint_call import *
 
 from nginx_file_writter import *
 
+from get_statistics import getStatistics
+
 """ 
 TODO: Remove the main function the goal of this method is to test the creation of the load balancer
  and target groups. Also to identify what is needed to create the load balancer
@@ -67,6 +69,8 @@ def main():
     except Exception as e:
         print(e)
 
+
+    
     awake = False
     # for now number of instances are 1
     awake_instances = None
@@ -163,6 +167,20 @@ def main():
 
     print("Requests were sent")
     # TODO: include cloud watch before tear down
+    try:
+        # Get all instances ids
+        instances_ids = []
+        for instance in ec2_resource.instances.filter(
+            Filters=[
+                {'Name': 'instance-state-name', 'Values': ['running']},
+                {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
+            ]
+        ):
+            instances_ids.append(instance.id)
+    
+        getStatistics(session,instances_ids)
+    except Exception as e:
+        print(e)
     # Tear down
     print("Tearing down")
     delete_load_balancer(elb_client, load_balancer)

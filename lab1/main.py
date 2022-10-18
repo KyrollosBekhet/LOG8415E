@@ -57,14 +57,14 @@ def main():
     try:
         # cluster 1 instances
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[0], 1, sg['GroupId'])
+                         private_key["KeyName"], "cluster1", subnets[0], 3, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "t2.large",
-                         private_key["KeyName"], "cluster1", subnets[1], 1, sg['GroupId'])
+                         private_key["KeyName"], "cluster1", subnets[1], 2, sg['GroupId'])
         # cluster 2 instances
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[1], 1, sg['GroupId'])
+                         private_key["KeyName"], "cluster2", subnets[1], 2, sg['GroupId'])
         create_instances(ec2_resource, instances_ami, "m4.large",
-                         private_key["KeyName"], "cluster2", subnets[0], 1, sg['GroupId'])
+                         private_key["KeyName"], "cluster2", subnets[0], 2, sg['GroupId'])
         print("Instances created")
     except Exception as e:
         print(e)
@@ -82,7 +82,7 @@ def main():
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 4:
+        if len(list(awake_instances.all())) == 9:
             awake = True
 
     public_ips = [instance.public_ip_address for instance in awake_instances.all()]

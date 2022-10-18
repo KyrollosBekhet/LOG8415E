@@ -107,7 +107,7 @@ if __name__ == '__main__':
         os.path.join(folder_path, "install.sh")
     ]
 
-    time.sleep(30)
+    time.sleep(60)
 
     deploy_threads = []
     for ip in public_ips:

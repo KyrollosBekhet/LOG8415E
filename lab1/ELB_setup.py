@@ -1,3 +1,6 @@
+import time
+
+
 def create_load_balancer(client, subnets, security_groups, target_groups):
     """
 
@@ -144,7 +147,7 @@ def add_instance_to_target_group(elb_client, cluster_arn, instances_id):
     )
 
     healthy = False
-    while not healthy:
+    while healthy is False:
         nb_healthy_targets = 0
         response = elb_client.describe_target_health(
             TargetGroupArn=cluster_arn,
@@ -157,3 +160,6 @@ def add_instance_to_target_group(elb_client, cluster_arn, instances_id):
 
         if nb_healthy_targets == len(instances_id):
             healthy = True
+
+        else:
+            time.sleep(1)

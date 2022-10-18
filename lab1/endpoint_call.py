@@ -1,5 +1,4 @@
 import traceback
-from importlib.resources import path
 import requests
 from threading import Thread
 import time
@@ -26,6 +25,8 @@ def call_endpoint_http_thread1(load_balancer_dns):
         print("Exception thrown thread {}.\n with stacktrace"
               .format(str(Thread.name)))
         traceback.print_exc()
+    finally:
+        exit(None)
 
 
 def call_endpoint_http_thread2(load_balancer_dns):
@@ -50,7 +51,8 @@ def call_endpoint_http_thread2(load_balancer_dns):
         print("Exception thrown thread {}.\n with stacktrace"
               .format(str(Thread.name)))
         traceback.print_exc()
-
+    finally:
+        exit(None)
 
 if __name__ == "__main__":
     threads = []

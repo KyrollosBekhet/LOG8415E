@@ -175,6 +175,7 @@ if __name__ == '__main__':
             instances_ids.append(instance.id)
     
         getStatistics(session,instances_ids)
+
     except Exception as e:
         print(e)
 

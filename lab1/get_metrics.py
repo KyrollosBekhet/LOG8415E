@@ -41,7 +41,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                     },
                     'Period': period,
                     'Stat': stat,
-                    #'Unit': unit,
+                    'Unit': unit,
                 }
             },
             {
@@ -64,7 +64,7 @@ def getMetric(client, metric_id, namespace, metric_name, period, stat, unit, tim
                     },
                     'Period': period,
                     'Stat': stat,
-                    #'Unit': unit,
+                    'Unit': unit,
                 }
             }
         ],
@@ -158,6 +158,96 @@ def getMetricInstance(client, instance_ids, metric_id, namespace, metric_name, p
                                 {
                                     "Name":"InstanceId",
                                     "Value":instance_ids[3],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id5",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[4],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id6",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[5],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id7",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[6],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id8",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[7],
+                            
+                                }]       
+                    },
+                    'Period': period,
+                    'Stat': stat,
+                    'Unit': unit,
+                }
+            },
+            {
+                'Id': "metric_id9",
+                'MetricStat': {
+                    'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': [ 
+                                {
+                                    "Name":"InstanceId",
+                                    "Value":instance_ids[8],
                             
                                 }]       
                     },

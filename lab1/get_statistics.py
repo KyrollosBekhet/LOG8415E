@@ -35,13 +35,26 @@ def getStatistics(session,instance_ids):
         printPlot(repNetOut, "network_out.png","NetworkOut")
     except Exception as e:
         print(e)
-    
-    repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600, session)
-    print(repREQCNT)
+    try:
+        repREQCNT = getMetric(client, 'request_count', 'AWS/ApplicationELB', 'RequestCount', 60, 'Sum', 'Count', 600, session)
+        print(repREQCNT)
+        printPlot(repREQCNT, "request_count.png", "RequestCount")
+    except Exception as e:
+        print(e)
     # Get average target response time on load balancer 
-    repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600, session)
-    print(repTIME)
-    
+    try:
+        repTIME = getMetric(client, 'target_response_time', 'AWS/ApplicationELB','TargetResponseTime',60,'Average','Seconds',600, session)
+        print(repTIME)
+        printPlot(repTIME,"target_response_time.png","Target Response Time")
+    except Exception as e:
+        print(e)
+        
+    try:
+        repHOST = getMetric(client, 'healthy_host_count', 'AWS/ApplicationELB','HealthyHostCount',60,'Average','Count',600, session)
+        print(repHOST)
+        printPlot(repHOST,"healthy_host_count.png","Healthy Host Count")
+    except Exception as e:
+        print(e)
     
 # Prints the plot
 #   resp: the response dictionnary 

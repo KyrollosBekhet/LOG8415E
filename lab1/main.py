@@ -73,7 +73,7 @@ if __name__ == '__main__':
                 {'Name': 'tag:Name', 'Values': ['cluster1', 'cluster2']}
             ]
         )
-        if len(list(awake_instances.all())) == 4:
+        if len(list(awake_instances.all())) == 9:
             awake = True
         
         else:

@@ -18,17 +18,15 @@ def round_robin_call_endpoint_http(load_balancer_dns, turns):
     """
     This function dispatch HTTP endpoint call between the two clusters.
     """
-    try:
-        # Calling next on this object alternate between 0 and 1
-        round_robin = cycle(range(2))
-        paths = ["cluster1", "cluster2"]
-        for _ in range(0, turns):
+    # Calling next on this object alternate between 0 and 1
+    round_robin = cycle(range(2))
+    paths = ["cluster1", "cluster2"]
+    for _ in range(0, turns):
+        try:
             call_endpoint_http(load_balancer_dns=load_balancer_dns, path=paths[next(round_robin)])
-    except Exception as ex:
-        print("Exception thrown thread {}.\n with stacktrace".format(str(Thread.name)))
-        traceback.print_exc()
-    finally:
-        exit(None)
+        except Exception as ex:
+            print("Exception thrown thread {}.\n with stacktrace".format(str(Thread.name)))
+            traceback.print_exc()
 
 
 def send_requests_thread1(load_balancer_dns):

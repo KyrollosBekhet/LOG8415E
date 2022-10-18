@@ -64,8 +64,6 @@ def printPlot(resp, fileName, ylabel):
 
     y = np.array(resp['MetricDataResults'][0]['Values'])
     x = np.array(resp['MetricDataResults'][0]['Timestamps'])
-    print(x)
-    print(y)
     plt.plot(x, y, label=resp['MetricDataResults'][0]['Label'])
     
     for r in range(1,len(resp['MetricDataResults'])):

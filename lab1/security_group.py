@@ -1,5 +1,4 @@
 import time
-
 import boto3
 
 
@@ -28,14 +27,16 @@ def create_security_group(ec2, vpc_id):
             "GroupId": "sg-903004f8"
         }
     """
-    sG = ec2.create_security_group(
+    security_group = ec2.create_security_group(
         Description="security group TP1",
         GroupName="TP1automaticSG",
         VpcId=vpc_id
     )
-    add_outbound_rules(ec2, sG['GroupId'])
-    add_inbound_rules(ec2, sG['GroupId'])
-    return sG
+
+    add_outbound_rules(ec2, security_group['GroupId'])
+    add_inbound_rules(ec2, security_group['GroupId'])
+
+    return security_group
 
 
 def add_inbound_rules(ec2, security_group_id):
@@ -48,15 +49,14 @@ def add_inbound_rules(ec2, security_group_id):
     ip_permission = [{
         'IpProtocol': 'tcp', 'FromPort': 80, 'ToPort': 80,
         'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-    },
-        {
-            'IpProtocol': 'tcp', 'FromPort': 443, 'ToPort': 443,
-            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-        },
-        {
-            'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22,
-            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-        }]
+    }, {
+        'IpProtocol': 'tcp', 'FromPort': 443, 'ToPort': 443,
+        'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+    }, {
+        'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22,
+        'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+    }]
+
     ec2.authorize_security_group_ingress(
         GroupId=security_group_id,
         IpPermissions=ip_permission)
@@ -84,15 +84,26 @@ def add_outbound_rules(ec2, security_group_id):
 
 
 def delete_security_group(ec2, security_group_id):
+    """
+    This function remove a security group
+    :security_group_id : The security group to delete
+    """
     ec2.delete_security_group(GroupId=security_group_id)
 
 
 if __name__ == "__main__":
+    """
+    This code sample is provided to execute this file from the command line without running the main.py.
+    """
     ec2_client = boto3.client('ec2')
+
     response = ec2_client.describe_vpcs()
     vpc_id = response.get('Vpcs', [{}])[0].get('VpcId', '')
-    sG = create_security_group(ec2_client, vpc_id)
-    print(sG['GroupId'])
+    security_group = create_security_group(ec2_client, vpc_id)
+
+    print(security_group['GroupId'])
+
     # The sleep is placed to simulate an interruption
     time.sleep(60)
-    delete_security_group(ec2_client, sG['GroupId'])
+
+    delete_security_group(ec2_client, security_group['GroupId'])

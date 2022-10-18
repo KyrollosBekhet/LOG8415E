@@ -13,9 +13,8 @@ def getStatistics(session,instance_ids):
     
     client = session.client('cloudwatch')
 
-    # Get CPU Usage on instances
-    
     try:
+        # Get CPU Usage on instances
         repCPU = getMetricInstance(client, instance_ids,'cpu_usage','AWS/EC2','CPUUtilization',30,'Sum','Percent',600)
         print(repCPU)
         printPlot(repCPU, "cpu_utilization.png","CPU Utilization")
@@ -23,12 +22,14 @@ def getStatistics(session,instance_ids):
         print(e)
         
     try:
+        # Get Network In on instances
         repNetIn = getMetricInstance(client, instance_ids,'network_in','AWS/EC2','NetworkIn',30,'Sum','Bytes',600)
         print(repNetIn)
         printPlot(repNetIn, "network_in.png","NetworkIn")
     except Exception as e:
         print(e)
     try:
+        # Get Network Out on instances
         repNetOut = getMetricInstance(client, instance_ids,'network_out','AWS/EC2','NetworkOut',30,'Sum','Bytes',600)
         print(repNetOut)
         printPlot(repNetOut, "network_out.png","NetworkOut")
@@ -58,9 +59,12 @@ def printPlot(resp, fileName, ylabel):
         y1 = np.array(resp['MetricDataResults'][r]['Values'])
         plt.plot(x1,y1,label=resp['MetricDataResults'][r]['Label'])
         print(y1)
+    # Labels for both axis
     plt.xlabel("Timestamp")
     plt.ylabel(ylabel)
     plt.legend(loc="upper left")
+    # Save as png image
     plt.savefig(fileName)
+    # Clear the plot for future use
     plt.clf()
 

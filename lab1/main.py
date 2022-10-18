@@ -162,7 +162,6 @@ if __name__ == '__main__':
         thread.join()
 
     print("Requests were sent")
-
     try:
         # Get all instances ids
         instances_ids = []

@@ -35,7 +35,7 @@ def send_requests_thread1(load_balancer_dns):
     """
      Sends 1000 requests divided equaly between the clusters.
      """
-    round_robin_call_endpoint_http(load_balancer_dns, 500)
+    round_robin_call_endpoint_http(load_balancer_dns, 1000)
 
 
 def send_requests_thread2(load_balancer_dns):

@@ -1,4 +1,4 @@
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf;
+#sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf;
 sudo apt-get install default-jdk -y;
 sudo apt-get install default-jre -y;
 sudo apt-get install python3-pip -y;
@@ -11,11 +11,28 @@ echo 'export JAVA_HOME="$(readlink -f /usr/bin/java| sed "s:bin/java::")"' >> ~/
 echo 'export PATH="$JAVA_HOME/bin":$PATH' >> ~/.profile;
 source ~/.profile;
 sudo python3 -m venv venv;
-source venv/bin/activate;
+ source venv/bin/activate;
 pip install pyspark;
-hdfs dfs -mkdir input;
-hdfs dfs -copyFromLocal 4300.txt input;
-time hadoop jar /usr/local/hadoop-3.3.4/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.4.jar wordcount input/4300.txt output;
+pip install pandas;
+hdfs dfs -mkdir input_social_networking;
+hdfs dfs -mkdir input_text_page;
+hdfs dfs -copyFromLocal LOG8415E/lab2/hadoop/social-network/soc-LiveJournal1Adj.txt input_social_networking;
+hdfs dfs -copyFromLocal 4300.txt input_text_page;
+
+echo "# output hadoop time for 4300.txt" >> time_results.txt
+export CLASSPATH="hadoop classpath":.:
+javac -d word_count_classes LOG8415E/lab2/hadoop/wordcount/WordCount.java
+jar -cvf socialnetwork.jar -C word_count_classes_classes/ .
+{ time hadoop jar socialnetwork.jar socialnetwork.SocialNetwork input_text_page output_text_page 2>1; } 2>> time_results.txt
+
+echo "# output linux time for 4300.txt" >>time_results.txt
+{ time cat 4300.txt | tr ' ' '\n' | sort | uniq -c 2>1; } 2>> time_results.txt
+
+javac -d socialnetwork_classes LOG8415E/lab2/hadoop/social-network/Friend.java LOG8415E/lab2/hadoop/social-network/SocialNetwork.java
+jar -cvf socialnetwork.jar -C socialnetwork_classes/ .
+hadoop jar socialnetwork.jar socialnetwork.SocialNetwork input_social_networking output_social_networking_results
+#python3 LOG8415E/lab2/spark/word_count.py
+#time hadoop jar /usr/local/hadoop-3.3.4/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.4.jar wordcount input/4300.txt output;
 
 
 

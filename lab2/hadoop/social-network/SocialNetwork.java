@@ -117,30 +117,37 @@ public class SocialNetwork {
             String textString = "    ";
 	        while(values.hasNext()) {
                 Friend user = values.next();
-		        if(user.isAlreadyFriend() || alreadyFriends.containsKey(user.getId())){
-                    alreadyFriends.putIfAbsent(user.getId(), user.copy());
+		        if(user.isAlreadyFriend()){
+                    if(alreadyFriends.containsKey(user.getId())){
+                            Friend existingSugg = alreadyFriends.get(user.getId());
+                            existingSugg.incrementMutualFriends(user.getMutualFriends());
+                            alreadyFriends.replace(user.getId(), existingSugg);
+                    }
+                    else{
+                        alreadyFriends.put(user.getId(), user.copy());
+                    }
+
                 }
                 else{
-                    notFriends.put(user.getId(), user.copy());
+                    if(notFriends.containsKey(user.getId())){
+                        Friend existingSugg = notFriends.get(user.getId());
+                        existingSugg.incrementMutualFriends(user.getMutualFriends());
+                        notFriends.replace(user.getId(), existingSugg);
+                    }
+                    else {
+                        notFriends.put(user.getId(), user.copy());
+                    }
                 }
    
             }
 
-            System.out.println(String.format(" For user %s there is %d friends", key.toString(),
-                    alreadyFriends.size()));
-            System.out.println(String.format(" For user %s there is %d not friends", key.toString(),
-                    notFriends.size()));
-
-            for(java.util.Map.Entry<String, Friend> entry: alreadyFriends.entrySet()){
-                notFriends.remove(entry.getKey());
-            }
-            System.out.println(String.format(" For user %s there is %d not friends", key.toString(),
-                    notFriends.size()));
-
             ArrayList<Friend> notFriendsSet = new ArrayList<>();
             for(java.util.Map.Entry<String, Friend> entry: notFriends.entrySet()){
-                notFriendsSet.add(entry.getValue().copy());
+                if(!alreadyFriends.containsKey(entry.getKey())){
+                    notFriendsSet.add(entry.getValue().copy());
+                }
             }
+
             notFriendsSet.sort(Comparator.comparing(Friend::getMutualFriends).reversed());
             for(int i = 0; i< 10 && i < notFriendsSet.size();i++){
                 textString += notFriendsSet.get(i).getId()  + " suggested by " +

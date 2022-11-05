@@ -8,21 +8,24 @@ import java.io.IOException;
 public class Friend implements Writable{
     private int id;
     private boolean alreadyFriend;
-
+    private long mutualFriends;
     Friend(){}
-    Friend(String id, boolean alreadyFriiend){
+    Friend(String id, boolean alreadyFriend, long mutualFriends){
         this.id = Integer.parseInt(id);
-        this.alreadyFriend = alreadyFriiend;
+        this.alreadyFriend = alreadyFriend;
+        this.mutualFriends = mutualFriends;
     }
 
     public void readFields(DataInput in) throws IOException {
         id = in.readInt();
         alreadyFriend = in.readBoolean();
+        mutualFriends = in.readLong();
     }
 
     public void write(DataOutput out) throws IOException{
         out.writeInt(id);
         out.writeBoolean(alreadyFriend);
+        out.writeLong(mutualFriends);
     }
 
     public static Friend read(DataInput in) throws IOException{
@@ -34,7 +37,19 @@ public class Friend implements Writable{
         return String.format("%d",id);
     }
 
+    public long getMutualFriends() {
+        return mutualFriends;
+    }
+
+    public void incrementMutualFriends(long incrementFactor){
+        mutualFriends += incrementFactor;
+    }
+
     public boolean isAlreadyFriend() {
         return alreadyFriend;
+    }
+
+    public Friend copy(){
+    	return new Friend(Integer.toString(id), alreadyFriend, mutualFriends);
     }
 }

@@ -1,18 +1,24 @@
 import paramiko
 from scp import SCPClient
 from io import StringIO
+import os
 
 
 def start_deployment(ip, files, commands, key_material):
     """
     This function starts the deployement process for the instance with the provided ip address.
-    The deployement script is runned on the instance. The provided deployement commands are also 
-    runned on the instance before closing the connection.
+    The deployment script is running on the instance. The provided deployment commands are also
+    running on the instance before closing the connection.
     """
     try:
         connection = instance_connection(ip, key_material)
         transfer_file(connection, files)
         run_commands(connection, commands)
+        ftp_client = connection.open_sftp()
+        print(ftp_client.listdir("/home/ubuntu/"))
+        print(ftp_client.listdir("/home/ubuntu/output/"))
+        ftp_client.get("/home/ubuntu/output/part-r-00000", os.path.join(os.path.curdir, "result"))
+        ftp_client.close()
         connection.close()
     except Exception as e:
         print(e)

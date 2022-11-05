@@ -14,10 +14,9 @@ sudo python3 -m venv venv;
 source venv/bin/activate;
 pip install pyspark;
 hdfs dfs -mkdir input;
-hdfs dfs -copyFromLocal 4300.txt input
-hadoop jar /usr/local/hadoop-3.3.4/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.4.jar wordcount input output
-echo "execute ls"
-ls;
+hdfs dfs -copyFromLocal 4300.txt input;
+time hadoop jar /usr/local/hadoop-3.3.4/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.4.jar wordcount input/4300.txt output;
+
 
 
 

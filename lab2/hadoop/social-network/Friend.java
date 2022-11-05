@@ -10,9 +10,9 @@ public class Friend implements Writable{
     private boolean alreadyFriend;
     private long mutualFriends;
     Friend(){}
-    Friend(String id, boolean alreadyFriiend, long mutualFriends){
+    Friend(String id, boolean alreadyFriend, long mutualFriends){
         this.id = Integer.parseInt(id);
-        this.alreadyFriend = alreadyFriiend;
+        this.alreadyFriend = alreadyFriend;
         this.mutualFriends = mutualFriends;
     }
 

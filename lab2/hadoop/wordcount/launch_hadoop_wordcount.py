@@ -5,8 +5,9 @@ import time
 
 def run_word_count(path, name, try_number):
     start = time.time()
+    split = path.split("/")
     os.system("hadoop jar wordcount.jar org.myorg.WordCount {0}/{1} output_{1}_{2}"
-              .format(path, name, try_number))
+              .format(split[0], name, try_number))
     end = time.time()
     return end - start
 
@@ -36,9 +37,8 @@ def acquire_datasets(urls, dest_dir="text_datasets"):
 
 
 def main():
-    os.system("export CLASSPATH=`hadoop classpath`:.:")
     os.system("javac -d wordcount_classes WordCount.java")
-    os.system("jar -cvf wordcount.jar -C wordcount_classes/.")
+    os.system("jar -cvf wordcount.jar -C wordcount_classes/ .")
 
     urls = ['https://tinyurl.com/4vxdw3pa',
             'https://tinyurl.com/kh9excea',
@@ -55,7 +55,7 @@ def main():
 
     template_text = "the time required to analyze {} is {} \n"
     final_text = ""
-    for i in range(0, 4):
+    for i in range(0, 3):
         for path, name in files:
             time = run_word_count(path, name, i)
             final_text += template_text.format(name, time)

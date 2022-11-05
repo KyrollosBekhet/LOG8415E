@@ -150,7 +150,8 @@ public class SocialNetwork {
 
             notFriendsSet.sort(Comparator.comparing(Friend::getMutualFriends).reversed());
             for(int i = 0; i< 10 && i < notFriendsSet.size();i++){
-                textString += notFriendsSet.get(i).getId() + ",";
+            	if (!(i == 0)) textString += ",";
+                textString += notFriendsSet.get(i).getId();
             }
 
             Text outputText = new Text(textString);

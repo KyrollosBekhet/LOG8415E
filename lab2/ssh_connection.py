@@ -1,4 +1,5 @@
 import paramiko
+import scp
 from scp import SCPClient
 from io import StringIO
 import os
@@ -6,24 +7,27 @@ import os
 
 def start_deployment(ip, files, commands, key_material):
     """
-    This function starts the deployement process for the instance with the provided ip address.
+    This function starts the deployment process for the instance with the provided ip address.
     The deployment script is running on the instance. The provided deployment commands are also
     running on the instance before closing the connection.
     """
+    connection = None
+    ftp_client = None
     try:
         connection = instance_connection(ip, key_material)
         transfer_file(connection, files)
         run_commands(connection, commands)
         ftp_client = connection.open_sftp()
-        print(ftp_client.listdir("/home/ubuntu/"))
-        print(ftp_client.listdir("/home/ubuntu/output/"))
-        ftp_client.get("/home/ubuntu/output/part-r-00000", os.path.join(os.path.curdir, "result"))
-        ftp_client.close()
-        connection.close()
+        ftp_client.get("/home/ubuntu/time_results.txt", os.path.join(os.path.curdir, "time_results.txt"))
+        ftp_client.get("/home/ubuntu/friends_suggestion_solution.txt", os.path.join(os.path.curdir, "friends_suggestion_solution.txt"))
     except Exception as e:
         print(e)
     finally:
-        exit(None)
+        if ftp_client is not None:
+            ftp_client.close()
+
+        if connection is not None:
+            connection.close()
 
 
 def instance_connection(instance_ip, key_material):

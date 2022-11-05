@@ -26,7 +26,7 @@ if __name__ == "__main__":
         "./install.sh;",
     ]
     try:
-        instance = create_instances(ec2_resource, instance_ami, "t2.micro",
+        instance = create_instances(ec2_resource, instance_ami, "m4.large",
                                     key_pair["KeyName"], "instance", 1, security_group_id)[0]
         instance.wait_until_running()
         print(instance.id)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         folder_path = os.path.curdir
         files = [
             os.path.join(folder_path, "install.sh"),
-            os.path.join(folder_path, "4300.txt"),
+            os.path.join(folder_path, '4300.txt'),
         ]
         time.sleep(60)
         start_deployment(public_ip, files, commands, key_pair["KeyMaterial"])

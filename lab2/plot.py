@@ -31,6 +31,16 @@ def readData(benchmarkData):
 def plotData(hadoopResults,sparkResults):
 	hadoopAvg = [(hadoopResults[0][i] + hadoopResults[1][i] + hadoopResults[2][i])/3 for i in range(9)]
 	sparkAvg = [(sparkResults[0][i] + sparkResults[1][i] + sparkResults[2][i])/3 for i in range(9)]
-	
+	print(hadoopAvg)
+	print(sparkAvg)
+	X = ['1st file', '2nd file', '3rd file', '4th file', '5th file', '6th file', '7th file', '8th file', '9th file']
+	X_axis = np.arange(len(X))
+	plt.bar(X_axis - 0.2, hadoopAvg, 0.4, label='hadoop')
+	plt.bar(X_axis + 0.2, sparkAvg, 0.4, label='spark')
+	plt.xticks(X_axis,X)
+	plt.ylabel("Time to execute (seconds)")
+	plt.title("Average execution time for each test file (WordCount)")
+	plt.legend()
+	plt.show()
 	
 readFile("benchmarking_time_results.txt");

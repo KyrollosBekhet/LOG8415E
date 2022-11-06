@@ -12,9 +12,9 @@ def readFile(benchmarkTextFile):
 	sparkTry3 = readData(benchmarkData)
 
 def readData(benchmarkData):
-	arr = np.empty(8,dtype='d')
+	arr = np.empty(9,dtype='d')
 	i = 0
-	while (i!=7):
+	while (i!=9):
 		line = benchmarkData.readline()
 		values = line.split("\t")
 		if values[0] == "real":

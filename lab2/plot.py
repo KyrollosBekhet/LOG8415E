@@ -68,6 +68,7 @@ def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title,fig
 	X_axis = np.arange(len(X))
 	plt.bar(X_axis - 0.2, data1Avg, 0.4, label=legend_name_1)
 	plt.bar(X_axis + 0.2, data2Avg, 0.4, label=legend_name_2)
+	plt.yscale("log")
 	plt.xticks(X_axis,X)
 	plt.ylabel("Time to execute (seconds)")
 	plt.title(title)

@@ -19,6 +19,7 @@ def start_deployment(ip, files, commands, key_material):
         run_commands(connection, commands)
         ftp_client = connection.open_sftp()
         ftp_client.get("/home/ubuntu/time_results.txt", os.path.join(os.path.curdir, "time_results.txt"))
+        ftp_client.get("/home/ubuntu/benchmarking_time_results.txt", os.path.join(os.path.curdir, "benchmarking_time_results.txt"))
         ftp_client.get("/home/ubuntu/friends_suggestion_solution.txt", os.path.join(os.path.curdir, "friends_suggestion_solution.txt"))
     except Exception as e:
         print(e)

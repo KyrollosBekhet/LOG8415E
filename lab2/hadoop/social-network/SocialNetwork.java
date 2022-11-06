@@ -48,56 +48,6 @@ public class SocialNetwork {
          }
     }
 
-    public static class Combine extends MapReduceBase implements Reducer<Text, Friend, Text, Friend>{
-        /***
-         *
-         * @param key A user
-         * @param values The list of suggested friends can be a current friend or not.
-         * @param output
-         * @param reporter
-         * @throws IOException
-         * This function counts the number of an iteration of a suggestion whether he/she is a friend or not
-         */
-        public void reduce(Text key, Iterator<Friend> values,
-                           OutputCollector<Text, Friend> output, Reporter reporter) throws IOException{
-            HashMap<String, Friend> notFriends = new HashMap<>();
-            HashMap<String, Friend> friends = new HashMap<>();
-            while(values.hasNext()) {
-                Friend user = values.next();
-                if(!user.isAlreadyFriend()){
-                    if(notFriends.containsKey(user.getId())){
-                        Friend existingUser = notFriends.get(user.getId());
-                        existingUser.incrementMutualFriends(user.getMutualFriends());
-                        notFriends.replace(user.getId(), existingUser);
-                    }
-                    else{
-                        notFriends.put(user.getId(), user.copy());
-                    }
-                }
-                else{
-                    if(friends.containsKey(user.getId())){
-                        Friend existingUser = friends.get(user.getId());
-                        existingUser.incrementMutualFriends(user.getMutualFriends());
-                        friends.replace(user.getId(), existingUser);
-                    }
-                    else{
-                        friends.put(user.getId(), user.copy());
-                    }
-                }
-
-            }
-
-            for(java.util.Map.Entry<String,Friend> sugg: notFriends.entrySet()){
-                Friend value = sugg.getValue();
-                output.collect(key, value.copy());
-            }
-            for(java.util.Map.Entry<String,Friend> sugg: friends.entrySet()){
-                Friend value = sugg.getValue();
-                output.collect(key, value.copy());
-            }
-        }
-    }
-
     public static class Reduce extends MapReduceBase implements Reducer<Text, Friend, Text, Text>{
         /***
          *
@@ -169,7 +119,6 @@ public class SocialNetwork {
         conf.setOutputValueClass(Text.class);
 	
         conf.setMapperClass(Map.class);
-        conf.setCombinerClass(Combine.class);
         conf.setReducerClass(Reduce.class);
 
         conf.setInputFormat(TextInputFormat.class);

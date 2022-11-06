@@ -41,6 +41,6 @@ def plotData(hadoopResults,sparkResults):
 	plt.ylabel("Time to execute (seconds)")
 	plt.title("Average execution time for each test file (WordCount)")
 	plt.legend()
-	plt.show()
+	plt.savefig("Average_benchmark_hadoop_spark.png")
 	
 readFile("benchmarking_time_results.txt");

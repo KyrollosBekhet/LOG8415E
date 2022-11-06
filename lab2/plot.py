@@ -75,4 +75,4 @@ def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title,fig
 	plt.savefig(fig_name)
 	plt.clf()
 readFile("benchmarking_time_results.txt", "hadoop","spark", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_spark.png");
-readFileLinux("time_results.txt", "linux","hadoop", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_linux.png")
+readFileLinux("time_results.txt", "hadoop","linux", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_linux.png")

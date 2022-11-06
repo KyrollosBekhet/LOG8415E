@@ -43,16 +43,4 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
     path = file_path.split("/")
     file_name = path[1]
-    """
-    files = [
-        (folder_path + "/2h6a75nk", "2h6a75nk"),
-        (folder_path + "/4vxdw3pa", "4vxdw3pa"),
-        (folder_path + "/datumz6m", "datumz6m"),
-        (folder_path + "/dybs9bnk", "dybs9bnk"),
-        (folder_path + "/j4j4xdw6", "j4j4xdw6"),
-        (folder_path + "/kh9excea", "kh9excea"),
-        (folder_path + "/vwvram8", "vwvram8"),
-        (folder_path + "/weh83uyn", "weh83uyn"),
-        (folder_path + "/ym8s5fm4", "ym8s5fm4")
-    ]"""
     generate_word_count(file_path, file_name)

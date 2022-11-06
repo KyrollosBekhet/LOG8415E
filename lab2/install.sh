@@ -1,4 +1,4 @@
-#sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf;
+sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf;
 sudo apt-get install default-jdk -y;
 sudo apt-get install default-jre -y;
 sudo apt-get install python3-pip -y;
@@ -14,6 +14,8 @@ sudo python3 -m venv venv;
 source venv/bin/activate;
 pip3 install pyspark --user;
 pip3 install pandas --user;
+pip3 install matplotlib --user;
+
 hdfs dfs -mkdir input_social_networking;
 hdfs dfs -mkdir input_text_page;
 hdfs dfs -copyFromLocal LOG8415E/lab2/hadoop/social-network/soc-LiveJournal1Adj.txt input_social_networking;
@@ -125,6 +127,8 @@ echo "benchmarking spark third run" >> benchmarking_time_results.txt
 { time python3 LOG8415E/lab2/spark/word_count.py dataset/2h6a75nk 2>1; } 2>> benchmarking_time_results.txt
 { time python3 LOG8415E/lab2/spark/word_count.py dataset/vwvram8 2>1; } 2>> benchmarking_time_results.txt
 { time python3 LOG8415E/lab2/spark/word_count.py dataset/weh83uyn 2>1; } 2>> benchmarking_time_results.txt
+
+python3 LOG8415E/lab2/plot.py
 
 
 

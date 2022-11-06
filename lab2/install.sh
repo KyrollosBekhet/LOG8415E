@@ -12,9 +12,10 @@ echo 'export PATH="$JAVA_HOME/bin":$PATH' >> ~/.profile;
 source ~/.profile;
 sudo python3 -m venv venv;
 source venv/bin/activate;
-pip3 install pyspark --user;
-pip3 install pandas --user;
-pip3 install matplotlib --user;
+pip3 install -r requirements.txt --user;
+#pip3 install pandas --user;
+#pip3 install matplotlib --user;
+#pip3 install numpy --user;
 
 hdfs dfs -mkdir input_social_networking;
 hdfs dfs -mkdir input_text_page;

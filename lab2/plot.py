@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def readFile(benchmarkTextFile):
+def readFile(benchmarkTextFile,legend_name_1,legend_name_2,title,fig_name):
 	benchmarkData = open(benchmarkTextFile, "r")
 	hadoopTry1 = readData(benchmarkData)
 	hadoopTry2 = readData(benchmarkData)
@@ -11,7 +11,7 @@ def readFile(benchmarkTextFile):
 	sparkTry2 = readData(benchmarkData)
 	sparkTry3 = readData(benchmarkData)
 
-	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3],"hadoop","spark", "Average execution time for each test file (WordCount)")
+	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3],legend_name_1, legend_name_2, title, fig_name)
 def readData(benchmarkData):
 	arr = np.empty(9,dtype='d')
 	i = 0
@@ -28,7 +28,7 @@ def readData(benchmarkData):
 	print(arr)
 	return arr
 
-def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title):
+def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title,fig_name):
 	data1Avg = [(data_1_results[0][i] + data_1_results[1][i] + data_1_results[2][i])/3 for i in range(9)]
 	data2Avg = [(data_2_results[0][i] + data_2_results[1][i] + data_2_results[2][i])/3 for i in range(9)]
 	X = ['1st file', '2nd file', '3rd file', '4th file', '5th file', '6th file', '7th file', '8th file', '9th file']
@@ -39,6 +39,7 @@ def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title):
 	plt.ylabel("Time to execute (seconds)")
 	plt.title(title)
 	plt.legend()
-	plt.savefig("Average_benchmark_hadoop_spark.png")
-	
-readFile("benchmarking_time_results.txt");
+	plt.savefig(fig_name)
+	plt.clf()
+readFile("benchmarking_time_results.txt", "hadoop","spark", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_spark.png");
+readFile("time_results.txt", "linux","hadoop", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_linux.png")

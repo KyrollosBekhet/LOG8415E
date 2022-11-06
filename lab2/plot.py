@@ -12,6 +12,39 @@ def readFile(benchmarkTextFile,legend_name_1,legend_name_2,title,fig_name):
 	sparkTry3 = readData(benchmarkData)
 
 	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3],legend_name_1, legend_name_2, title, fig_name)
+	
+def readFileLinux(benchmarkTextFile,legend_name_1,legend_name_2,title,fig_name):
+	benchmarkData = open(benchmarkTextFile, "r")
+	hadoop_time = 0
+	linux_time = 0
+	while (True):
+		line = benchmarkData.readline()
+		values = line.split("\t")
+		if values[0] == "real":
+			minutes = values[1].split("m")[0]
+			seconds = values[1].split("m")[1].split("s")[0]
+			hadoop_time = minutes * 60 + seconds
+			break
+	while (True):
+		line = benchmarkData.readline()
+		values = line.split("\t")
+		if values[0] == "real":
+			minutes = values[1].split("m")[0]
+			seconds = values[1].split("m")[1].split("s")[0]
+			linux_time = minutes * 60 + seconds
+			break
+	X = ['1st file']
+	X_axis = np.arange(len(X))
+	plt.bar(X_axis - 0.2, np.array([hadoop_time]), 0.4, label=legend_name_1)
+	plt.bar(X_axis + 0.2, np.array([linux_time]), 0.4, label=legend_name_2)
+	plt.xticks(X_axis,X)
+	plt.ylabel("Time to execute (seconds)")
+	plt.title(title)
+	plt.legend()
+	plt.savefig(fig_name)
+	plt.clf()
+
+
 def readData(benchmarkData):
 	arr = np.empty(9,dtype='d')
 	i = 0
@@ -35,6 +68,7 @@ def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title,fig
 	X_axis = np.arange(len(X))
 	plt.bar(X_axis - 0.2, data1Avg, 0.4, label=legend_name_1)
 	plt.bar(X_axis + 0.2, data2Avg, 0.4, label=legend_name_2)
+	plt.yscale("log")
 	plt.xticks(X_axis,X)
 	plt.ylabel("Time to execute (seconds)")
 	plt.title(title)
@@ -42,4 +76,4 @@ def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title,fig
 	plt.savefig(fig_name)
 	plt.clf()
 readFile("benchmarking_time_results.txt", "hadoop","spark", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_spark.png");
-#readFile("time_results.txt", "linux","hadoop", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_linux.png")
+readFileLinux("time_results.txt", "hadoop","linux", "Average execution time for each test file (WordCount)", "Average_benchmark_hadoop_linux.png")

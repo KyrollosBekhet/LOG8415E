@@ -12,7 +12,7 @@ echo 'export PATH="$JAVA_HOME/bin":$PATH' >> ~/.profile;
 source ~/.profile;
 sudo python3 -m venv venv;
 source venv/bin/activate;
-pip3 install -r requirements.txt --user;
+pip3 install -r LOG8415E/lab2/requirements.txt --user;
 #pip3 install pandas --user;
 #pip3 install matplotlib --user;
 #pip3 install numpy --user;

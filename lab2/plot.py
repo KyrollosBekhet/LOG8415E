@@ -11,6 +11,7 @@ def readFile(benchmarkTextFile):
 	sparkTry2 = readData(benchmarkData)
 	sparkTry3 = readData(benchmarkData)
 
+	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3])
 def readData(benchmarkData):
 	arr = np.empty(9,dtype='d')
 	i = 0
@@ -27,6 +28,9 @@ def readData(benchmarkData):
 	print(arr)
 	return arr
 
-
+def plotData(hadoopResults,sparkResults):
+	hadoopAvg = [(hadoopResults[0][i] + hadoopResults[1][i] + hadoopResults[2][i])/3 for i in range(9)]
+	sparkAvg = [(sparkResults[0][i] + sparkResults[1][i] + sparkResults[2][i])/3 for i in range(9)]
+	
 	
 readFile("benchmarking_time_results.txt");

@@ -11,7 +11,7 @@ def readFile(benchmarkTextFile):
 	sparkTry2 = readData(benchmarkData)
 	sparkTry3 = readData(benchmarkData)
 
-	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3])
+	plotData([hadoopTry1,hadoopTry2,hadoopTry3],[sparkTry1,sparkTry2,sparkTry3],"hadoop","spark", "Average execution time for each test file (WordCount)")
 def readData(benchmarkData):
 	arr = np.empty(9,dtype='d')
 	i = 0
@@ -28,18 +28,16 @@ def readData(benchmarkData):
 	print(arr)
 	return arr
 
-def plotData(hadoopResults,sparkResults):
-	hadoopAvg = [(hadoopResults[0][i] + hadoopResults[1][i] + hadoopResults[2][i])/3 for i in range(9)]
-	sparkAvg = [(sparkResults[0][i] + sparkResults[1][i] + sparkResults[2][i])/3 for i in range(9)]
-	print(hadoopAvg)
-	print(sparkAvg)
+def plotData(data_1_results,data_2_results,legend_name_1,legend_name_2,title):
+	data1Avg = [(data_1_results[0][i] + data_1_results[1][i] + data_1_results[2][i])/3 for i in range(9)]
+	data2Avg = [(data_2_results[0][i] + data_2_results[1][i] + data_2_results[2][i])/3 for i in range(9)]
 	X = ['1st file', '2nd file', '3rd file', '4th file', '5th file', '6th file', '7th file', '8th file', '9th file']
 	X_axis = np.arange(len(X))
-	plt.bar(X_axis - 0.2, hadoopAvg, 0.4, label='hadoop')
-	plt.bar(X_axis + 0.2, sparkAvg, 0.4, label='spark')
+	plt.bar(X_axis - 0.2, data1Avg, 0.4, label=legend_name_1)
+	plt.bar(X_axis + 0.2, data2Avg, 0.4, label=legend_name_2)
 	plt.xticks(X_axis,X)
 	plt.ylabel("Time to execute (seconds)")
-	plt.title("Average execution time for each test file (WordCount)")
+	plt.title(title)
 	plt.legend()
 	plt.savefig("Average_benchmark_hadoop_spark.png")
 	

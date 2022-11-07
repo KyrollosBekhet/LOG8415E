@@ -29,7 +29,7 @@ def generate_word_count(path, name, result_dir="results"):
 
     # counts.saveAsTextFile("{}/{}".format(result_dir, name))
 
-    # Save dataframe to disk (or do something with it)
+    # Save dataframe to disk
     df_result.toPandas().to_csv("{}/{}".format(result_dir, name), index=False)
 
     return df_result

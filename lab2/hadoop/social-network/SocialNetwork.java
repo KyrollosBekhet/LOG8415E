@@ -33,25 +33,29 @@ public class SocialNetwork {
          */
         public void map(LongWritable key, Text value,
                 OutputCollector<Text, Friend> output, Reporter reporter) throws IOException {
+            try {
 
-            String[] userFriends = value.toString().split("\t"); // Separate <User> and <Friends> using <TAB>
+                String[] userFriends = value.toString().split("\t"); // Separate <User> and <Friends> using <TAB>
 
-            user = new Text(userFriends[0]);
-            String[] friends = userFriends[1].split(",");
+                user = new Text(userFriends[0]);
+                String[] friends = userFriends[1].split(",");
 
-            StringTokenizer tokenizer = new StringTokenizer(userFriends[1], ",");
-            Text currentFriend = new Text();
+                StringTokenizer tokenizer = new StringTokenizer(userFriends[1], ",");
+                Text currentFriend = new Text();
 
-            while (tokenizer.hasMoreTokens()) {
-                currentFriend.set(tokenizer.nextToken());
-                // Create relations between current friend and the other friends.
-                for (int i = 0; i < friends.length; i++) {
-                    // Cannot be friend with itself
-                    if (!friends[i].equals(currentFriend.toString())) {
-                        output.collect(currentFriend, new Friend(friends[i], false, 1));
+                while (tokenizer.hasMoreTokens()) {
+                    currentFriend.set(tokenizer.nextToken());
+                    // Create relations between current friend and the other friends.
+                    for (int i = 0; i < friends.length; i++) {
+                        // Cannot be friend with itself
+                        if (!friends[i].equals(currentFriend.toString())) {
+                            output.collect(currentFriend, new Friend(friends[i], false, 1));
+                        }
                     }
+                    output.collect(currentFriend, new Friend(user.toString(), true, 1));
                 }
-                output.collect(currentFriend, new Friend(user.toString(), true, 1));
+            } catch(IndexOutOfBoundsException ex) {
+                System.out.println("user doesn't have a friend");
             }
         }
     }

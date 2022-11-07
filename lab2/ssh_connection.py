@@ -23,6 +23,8 @@ def start_deployment(ip, files, commands, key_material):
         ftp_client.get("/home/ubuntu/friends_suggestion_solution.txt", os.path.join(os.path.curdir, "friends_suggestion_solution.txt"))
         ftp_client.get("/home/ubuntu/Average_benchmark_hadoop_spark.png",
                        os.path.join(os.path.curdir, "Average_benchmark_hadoop_spark.png"))
+        ftp_client.get("/home/ubuntu/Average_benchmark_hadoop_linux.png",
+                       os.path.join(os.path.curdir, "Average_benchmark_hadoop_linux.png"))
     except Exception as e:
         print(e)
     finally:

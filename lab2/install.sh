@@ -17,7 +17,6 @@ pip install pandas;
 pip install matplotlib;
 pip install numpy;
 
-cd LOG8415E && git checkout automate_deployment && cd ..
 hdfs dfs -mkdir input_social_networking;
 hdfs dfs -mkdir input_text_page;
 hdfs dfs -copyFromLocal LOG8415E/lab2/hadoop/social-network/soc-LiveJournal1Adj.txt input_social_networking;

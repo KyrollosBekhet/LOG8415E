@@ -2,6 +2,9 @@ package socialnetwork;
 
 import java.io.IOException;
 import java.util.*;
+
+import javax.xml.soap.Text;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
@@ -33,10 +36,10 @@ public class SocialNetwork {
          */
         public void map(LongWritable key, Text value,
                 OutputCollector<Text, Friend> output, Reporter reporter) throws IOException {
+            String line = value.toString();
+                
             try {
-
-                String[] userFriends = value.toString().split("\t"); // Separate <User> and <Friends> using <TAB>
-
+                String[] userFriends = line.split("\t"); // Separate <User> and <Friends> using <TAB>
                 user = new Text(userFriends[0]);
                 String[] friends = userFriends[1].split(",");
 

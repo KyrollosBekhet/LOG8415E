@@ -3,8 +3,6 @@ package socialnetwork;
 import java.io.IOException;
 import java.util.*;
 
-import javax.xml.soap.Text;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
@@ -85,7 +83,7 @@ public class SocialNetwork {
 
             HashMap<String, Friend> alreadyFriends = new HashMap<>();
             HashMap<String, Friend> notFriends = new HashMap<>();
-            String recommendations = "\t";
+            String recommendations = "   ";
 
             while (values.hasNext()) {
                 Friend user = values.next();
